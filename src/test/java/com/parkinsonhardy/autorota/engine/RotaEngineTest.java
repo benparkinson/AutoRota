@@ -1,7 +1,9 @@
 package com.parkinsonhardy.autorota.engine;
 
 import com.parkinsonhardy.autorota.exceptions.RotaException;
+import com.parkinsonhardy.autorota.rules.MaxAverageHoursPerWeekRule;
 import com.parkinsonhardy.autorota.rules.MaxConsecutiveShiftRule;
+import com.parkinsonhardy.autorota.rules.MaxHoursPerWeekRule;
 import com.parkinsonhardy.autorota.rules.MinHoursBetweenShiftsRule;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -28,6 +30,24 @@ public class RotaEngineTest {
         Assert.assertEquals(DateTime.now().withTime(LocalTime.parse("10:30")), employees.get(0).getShifts().get(0).getStartTime());
         Assert.assertEquals(DateTime.now().withTime(LocalTime.parse("11:30")), employees.get(0).getShifts().get(0).getEndTime());
         Assert.assertEquals("Day", employees.get(0).getShifts().get(0).getShiftType());
+    }
+
+    @Test
+    public void testWorkerGetsAShiftNightShift() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("20:30"), LocalTime.parse("09:00")));
+        rotaEngine.addEmployee(new Employee("Ben"));
+        addSimpleRequirement(rotaEngine, "Night", 1);
+        rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
+
+        List<Employee> employees = rotaEngine.getEmployees();
+        Assert.assertEquals(1, employees.size());
+        Assert.assertEquals("Ben", employees.get(0).getName());
+        Assert.assertEquals(1, employees.get(0).getShifts().size());
+        Assert.assertEquals(DateTime.now().withTime(LocalTime.parse("20:30")), employees.get(0).getShifts().get(0).getStartTime());
+        Assert.assertEquals(DateTime.now().plusDays(1).withTime(LocalTime.parse("09:00")), employees.get(0).getShifts().get(0).getEndTime());
+        Assert.assertEquals("Night", employees.get(0).getShifts().get(0).getShiftType());
     }
 
     @Test
@@ -206,6 +226,183 @@ public class RotaEngineTest {
         addSimpleRequirement(rotaEngine, "Day4", 1);
         rotaEngine.addRules(new MinHoursBetweenShiftsRule(1));
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
+    }
+
+    @Test
+    public void testMaxHoursPerWeekRuleAssignsShift() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addRules(new MaxHoursPerWeekRule(6));
+        rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
+
+        List<Employee> employees = rotaEngine.getEmployees();
+        Assert.assertEquals(1, employees.size());
+        Assert.assertEquals("Real Ben", employees.get(0).getName());
+        Assert.assertEquals(1, employees.get(0).getShifts().size());
+        Assert.assertEquals(DateTime.now().withTime(LocalTime.parse("10:30")), employees.get(0).getShifts().get(0).getStartTime());
+        Assert.assertEquals(DateTime.now().withTime(LocalTime.parse("15:30")), employees.get(0).getShifts().get(0).getEndTime());
+        Assert.assertEquals("Day", employees.get(0).getShifts().get(0).getShiftType());
+    }
+
+    @Test(expected = RotaException.class)
+    public void testMaxHoursPerWeekRuleThrowsExceptionWithLongShift() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addRules(new MaxHoursPerWeekRule(4));
+        rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
+    }
+
+    @Test(expected = RotaException.class)
+    public void testMaxHoursPerWeekRuleThrowsExceptionWithMultipleShifts() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("12:30")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addRules(new MaxHoursPerWeekRule(4));
+        DateTime monday = getNextMonday();
+        DateTime threeDaysLater = monday.plusDays(3);
+        rotaEngine.assignShifts(monday, threeDaysLater);
+    }
+
+    @Test
+    public void testMaxHoursPerWeekRuleDoesntThrowExceptionWithMultipleShiftsOverWeekThreshold() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("12:30")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addRules(new MaxHoursPerWeekRule(4));
+        DateTime sunday = getNextMonday().minusDays(1);
+        DateTime threeDaysLater = sunday.plusDays(3);
+        rotaEngine.assignShifts(sunday, threeDaysLater);
+
+        List<Employee> employees = rotaEngine.getEmployees();
+        Assert.assertEquals(1, employees.size());
+        Assert.assertEquals(3, employees.get(0).getShifts().size());
+    }
+
+    @Test
+    public void testMaxHoursPerWeekRuleDoesntThrowExceptionWithMultipleShiftsOverWeekThresholdNightShifts() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("23:00"), LocalTime.parse("01:00")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Night", 1);
+        rotaEngine.addRules(new MaxHoursPerWeekRule(3));
+        DateTime sunday = getNextMonday().minusDays(1);
+        DateTime twoDaysLater = sunday.plusDays(2);
+        rotaEngine.assignShifts(sunday, twoDaysLater);
+
+        List<Employee> employees = rotaEngine.getEmployees();
+        Assert.assertEquals(1, employees.size());
+        Assert.assertEquals(2, employees.get(0).getShifts().size());
+    }
+
+    @Test
+    public void testMaxHoursPerWeekRuleDoesntThrowExceptionWithSingleShiftOverWeekThresholdNightShifts() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("01:00")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Night", 1);
+        rotaEngine.addRules(new MaxHoursPerWeekRule(2));
+        DateTime sunday = getNextMonday().minusDays(1);
+        DateTime oneDayLater = sunday.plusDays(1);
+        rotaEngine.assignShifts(sunday, oneDayLater);
+
+        List<Employee> employees = rotaEngine.getEmployees();
+        Assert.assertEquals(1, employees.size());
+        Assert.assertEquals(1, employees.get(0).getShifts().size());
+    }
+
+    @Test(expected = RotaException.class)
+    public void testMaxHoursPerWeekRuleThrowsExceptionWithSingleShiftOverWeekThresholdNightShifts() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("01:00")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Night", 1);
+        rotaEngine.addRules(new MaxHoursPerWeekRule(3));
+        DateTime sunday = getNextMonday().minusDays(1);
+        DateTime twoDaysLater = sunday.plusDays(2);
+        rotaEngine.assignShifts(sunday, twoDaysLater);
+    }
+
+    @Test(expected = RotaException.class)
+    public void testMaxHoursPerWeekRuleThrowsExceptionWithMultipleShiftsOverWeekThresholdNightShifts2() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("01:00")));
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("12:00"), LocalTime.parse("15:00")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Night", 1);
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
+        rotaEngine.addRules(new MaxHoursPerWeekRule(3));
+        DateTime sunday = getNextMonday().minusDays(1);
+        DateTime twoDaysLater = sunday.plusDays(2);
+        rotaEngine.assignShifts(sunday, twoDaysLater);
+    }
+
+    @Test
+    public void testMaxAverageHoursPerWeekPreCheckPasses() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(6));
+        DateTime sunday = getNextMonday().minusDays(1);
+        DateTime oneDayLater = sunday.plusDays(1);
+        rotaEngine.assignShifts(sunday, oneDayLater);
+
+        Assert.assertEquals(1, rotaEngine.getEmployees().size());
+        Assert.assertEquals(1, rotaEngine.getEmployees().get(0).getShifts().size());
+    }
+
+    @Test(expected = RotaException.class)
+    public void testMaxAverageHoursPerWeekPreCheckThrows() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(6));
+        DateTime sunday = getNextMonday().minusDays(1);
+        DateTime threeDaysLater = sunday.plusDays(3);
+        rotaEngine.assignShifts(sunday, threeDaysLater);
+    }
+
+    @Test
+    public void testMaxAverageHoursPerWeekPreCheckPassesShiftOverWeekThreshold() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("02:00")));
+        rotaEngine.addEmployee(new Employee("Real Ben"));
+        addSimpleRequirement(rotaEngine, "Night", 1);
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(6));
+        DateTime saturday = getNextMonday().minusDays(2);
+        DateTime monday = saturday.plusDays(3);
+        rotaEngine.assignShifts(saturday, monday);
+
+        Assert.assertEquals(1, rotaEngine.getEmployees().size());
+        Assert.assertEquals(3, rotaEngine.getEmployees().get(0).getShifts().size());
+    }
+
+    // todo: test interrim check rebalances employees (how?)
+
+    // todo: test final check throws/doesn't throw...
+
+    private DateTime getNextMonday() {
+        DateTime today = DateTime.now().withTimeAtStartOfDay();
+        int dayOfWeek = today.getDayOfWeek();
+        return today.plusDays(8 - dayOfWeek);
     }
 
     private void addSimpleRequirement(RotaEngine rotaEngine, String shiftType, int minEmployees) {

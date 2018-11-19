@@ -7,6 +7,7 @@ public class Employee {
 
     private String name;
     private List<Shift> shifts = new ArrayList<>();
+    private int priorityWeight = 0;
 
     public Employee(String name) {
         this.name = name;
@@ -39,5 +40,13 @@ public class Employee {
         && potentialShift.getEndTime().isAfter(shift.getEndTime()))
                 || (potentialShift.getEndTime().isAfter(shift.getStartTime())
         && potentialShift.getStartTime().isBefore(shift.getStartTime()));
+    }
+
+    public int getPriorityWeight() {
+        return priorityWeight;
+    }
+
+    public void setPriorityWeight(int priorityWeight) {
+        this.priorityWeight = priorityWeight;
     }
 }

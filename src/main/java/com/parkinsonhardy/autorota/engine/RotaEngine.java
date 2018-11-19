@@ -1,13 +1,11 @@
 package com.parkinsonhardy.autorota.engine;
 
 import com.parkinsonhardy.autorota.exceptions.RotaException;
+import com.parkinsonhardy.autorota.rules.HolisticRule;
 import com.parkinsonhardy.autorota.rules.Rule;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RotaEngine {
 
@@ -15,6 +13,7 @@ public class RotaEngine {
     private List<ShiftRequirement> shiftRequirements = new ArrayList<>();
     private List<Employee> employees = new ArrayList<>();
     private List<Rule> rules = new ArrayList<>();
+    private List<HolisticRule> holisticRules = new ArrayList<>();
 
     public void addShiftDefinition(ShiftDefinition shiftDefinition) {
         this.shiftDefinitionsByType.put(shiftDefinition.getShiftType(), shiftDefinition);
@@ -32,30 +31,59 @@ public class RotaEngine {
         this.rules.add(rule);
     }
 
+    public void addHolisticRule(HolisticRule rule) {
+        this.holisticRules.add(rule);
+    }
+
     public void assignShifts(DateTime from, DateTime to) throws RotaException {
         if (0 == shiftRequirements.size()) {
             return;
         }
 
+        for (HolisticRule holisticRule : holisticRules) {
+            if (!holisticRule.passesPreCheck(from, to, this.shiftDefinitionsByType, this.shiftRequirements,
+                    this.employees)) {
+                throw new RotaException(String.format("Holistic rule: %s can not pass given the parameters!", holisticRule.toString()));
+            }
+        }
+
+        int currentWeek = from.getWeekOfWeekyear();
         for (DateTime dt = from.withTimeAtStartOfDay(); dt.isBefore(to.withTimeAtStartOfDay().getMillis()); dt = dt.plusDays(1)) {
+            if (dt.getWeekOfWeekyear() != currentWeek) {
+                currentWeek = dt.getWeekOfWeekyear();
+                for (HolisticRule holisticRule : holisticRules) {
+                    holisticRule.interrimCheck(employees);
+                }
+            }
             for (ShiftRequirement shiftRequirement : shiftRequirements) {
                 if (shiftRequirement.getDayOfWeek() != dt.getDayOfWeek()) {
                     continue;
                 }
                 ShiftDefinition shiftDefinition = shiftDefinitionsByType.get(shiftRequirement.getShiftType());
                 for (int i = 0; i < shiftRequirement.getMinEmployees(); i++) {
+                    DateTime endDate;
+                    if (shiftDefinition.getEndTime().isBefore(shiftDefinition.getStartTime())) {
+                        endDate = dt.plusDays(1);
+                    } else {
+                        endDate = dt;
+                    }
                     Shift shift = new Shift(shiftDefinition.getShiftType(),
-                            dt.withTime(shiftDefinition.getStartTime()), dt.withTime(shiftDefinition.getEndTime()));
+                            dt.withTime(shiftDefinition.getStartTime()), endDate.withTime(shiftDefinition.getEndTime()));
                     Employee employee = getAvailableEmployee(shift);
 
                     employee.addShift(shift);
                 }
             }
         }
+
+        for (HolisticRule holisticRule : holisticRules) {
+            holisticRule.finalCheck(employees);
+        }
     }
 
     private Employee getAvailableEmployee(Shift shift) throws RotaException {
-        // todo randomise order
+        // reverse sort, higher number first
+        employees.sort((o1, o2) -> Integer.compare(o2.getPriorityWeight(), o1.getPriorityWeight()));
         for (Employee employee : employees) {
             if (employee.isAvailableForShift(shift)) {
                 if (shiftIsAcceptable(employee, shift)) {
