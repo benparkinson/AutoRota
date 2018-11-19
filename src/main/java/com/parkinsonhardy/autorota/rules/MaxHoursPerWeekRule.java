@@ -22,10 +22,10 @@ public class MaxHoursPerWeekRule implements Rule {
         if (shift.getStartTime().getWeekOfWeekyear() != shift.getEndTime().getWeekOfWeekyear()) {
             int newShiftWeek = shift.getStartTime().getWeekOfWeekyear();
             int hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(shift.getStartTime().toLocalTime(),
-                    new LocalTime(0, 0, 0));
+                    LocalTime.MIDNIGHT);
             boolean firstWeek = checkWeekCanTakeMoreHours(newShiftWeek, hoursPerShiftWeek, shifts);
             newShiftWeek = shift.getEndTime().getWeekOfWeekyear();
-            hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(new LocalTime(0, 0, 0), shift.getEndTime().toLocalTime());
+            hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(LocalTime.MIDNIGHT, shift.getEndTime().toLocalTime());
             boolean secondWeek = checkWeekCanTakeMoreHours(newShiftWeek, hoursPerShiftWeek, shifts);
             return firstWeek && secondWeek;
         } else {
@@ -45,7 +45,7 @@ public class MaxHoursPerWeekRule implements Rule {
                 LocalTime endTime = shiftToCheck.getEndTime().toLocalTime();
                 if (shiftToCheck.getStartTime().getWeekOfWeekyear() !=
                         shiftToCheck.getEndTime().getWeekOfWeekyear()) {
-                    endTime = new LocalTime(0, 0, 0);
+                    endTime = LocalTime.MIDNIGHT;
                 }
 
                 hoursPerShiftWeek += ShiftHelper.CalculateShiftHours(shiftToCheck.getStartTime().toLocalTime(), endTime);
@@ -53,7 +53,7 @@ public class MaxHoursPerWeekRule implements Rule {
                     return false;
                 }
             } else if (shiftToCheck.getEndTime().getWeekOfWeekyear() == weekOfYear) {
-                hoursPerShiftWeek += ShiftHelper.CalculateShiftHours(new LocalTime(0,0,0), shiftToCheck.getEndTime().toLocalTime());
+                hoursPerShiftWeek += ShiftHelper.CalculateShiftHours(LocalTime.MIDNIGHT, shiftToCheck.getEndTime().toLocalTime());
                 if (hoursPerShiftWeek > maxHours) {
                     return false;
                 }

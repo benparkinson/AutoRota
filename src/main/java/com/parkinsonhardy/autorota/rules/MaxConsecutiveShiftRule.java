@@ -31,7 +31,7 @@ public class MaxConsecutiveShiftRule implements Rule {
 
         boolean foundPreviousShift = false;
         int numberOfSameShift = 0;
-        for (int i = shifts.size() -1; i > -1; i--) {
+        for (int i = shifts.size() - 1; i > -1; i--) {
             Shift shiftToCheck = shifts.get(i);
             if (!foundPreviousShift) {
                 if (shiftToCheck.getEndTime().isBefore(shift.getStartTime())

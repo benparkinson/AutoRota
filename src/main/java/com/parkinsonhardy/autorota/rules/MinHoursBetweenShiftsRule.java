@@ -26,7 +26,7 @@ public class MinHoursBetweenShiftsRule implements Rule {
         Collections.sort(shifts);
 
         boolean foundPreviousShift = false;
-        for (int i = shifts.size() -1; i > -1; i--) {
+        for (int i = shifts.size() - 1; i > -1; i--) {
             Shift shiftToCheck = shifts.get(i);
             if (!foundPreviousShift) {
                 if (shiftToCheck.getEndTime().isBefore(shift.getStartTime()) ||

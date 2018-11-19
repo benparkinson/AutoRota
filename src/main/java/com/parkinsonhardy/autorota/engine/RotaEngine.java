@@ -47,13 +47,9 @@ public class RotaEngine {
             }
         }
 
-        int currentWeek = from.getWeekOfWeekyear();
         for (DateTime dt = from.withTimeAtStartOfDay(); dt.isBefore(to.withTimeAtStartOfDay().getMillis()); dt = dt.plusDays(1)) {
-            if (dt.getWeekOfWeekyear() != currentWeek) {
-                currentWeek = dt.getWeekOfWeekyear();
-                for (HolisticRule holisticRule : holisticRules) {
-                    holisticRule.interrimCheck(employees);
-                }
+            for (HolisticRule holisticRule : holisticRules) {
+                holisticRule.interrimCheck(employees);
             }
             for (ShiftRequirement shiftRequirement : shiftRequirements) {
                 if (shiftRequirement.getDayOfWeek() != dt.getDayOfWeek()) {
@@ -82,8 +78,7 @@ public class RotaEngine {
     }
 
     private Employee getAvailableEmployee(Shift shift) throws RotaException {
-        // reverse sort, higher number first
-        employees.sort((o1, o2) -> Integer.compare(o2.getPriorityWeight(), o1.getPriorityWeight()));
+        employees.sort(Comparator.comparingInt(Employee::getPriorityWeight));
         for (Employee employee : employees) {
             if (employee.isAvailableForShift(shift)) {
                 if (shiftIsAcceptable(employee, shift)) {

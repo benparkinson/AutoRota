@@ -2,14 +2,17 @@ package com.parkinsonhardy.autorota.engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Employee {
 
+    private long id;
     private String name;
     private List<Shift> shifts = new ArrayList<>();
     private int priorityWeight = 0;
 
-    public Employee(String name) {
+    public Employee(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
@@ -37,9 +40,9 @@ public class Employee {
 
     private boolean shiftsOverlap(Shift shift, Shift potentialShift) {
         return shift.equals(potentialShift) || (potentialShift.getStartTime().isBefore(shift.getEndTime())
-        && potentialShift.getEndTime().isAfter(shift.getEndTime()))
+                && potentialShift.getEndTime().isAfter(shift.getEndTime()))
                 || (potentialShift.getEndTime().isAfter(shift.getStartTime())
-        && potentialShift.getStartTime().isBefore(shift.getStartTime()));
+                && potentialShift.getStartTime().isBefore(shift.getStartTime()));
     }
 
     public int getPriorityWeight() {
@@ -48,5 +51,18 @@ public class Employee {
 
     public void setPriorityWeight(int priorityWeight) {
         this.priorityWeight = priorityWeight;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return id == employee.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

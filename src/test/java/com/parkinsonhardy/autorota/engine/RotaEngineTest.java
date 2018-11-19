@@ -19,7 +19,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
-        rotaEngine.addEmployee(new Employee("Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
 
@@ -37,7 +37,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("20:30"), LocalTime.parse("09:00")));
-        rotaEngine.addEmployee(new Employee("Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Ben"));
         addSimpleRequirement(rotaEngine, "Night", 1);
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
 
@@ -55,7 +55,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
-        rotaEngine.addEmployee(new Employee("Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Ben"));
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
 
         List<Employee> employees = rotaEngine.getEmployees();
@@ -69,7 +69,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
-        rotaEngine.addEmployee(new Employee("Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Ben"));
         addSimpleRequirement(rotaEngine, "Day", 2);
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
     }
@@ -80,8 +80,8 @@ public class RotaEngineTest {
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("LaterDay", LocalTime.parse("11:00"), LocalTime.parse("12:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
-        rotaEngine.addEmployee(new Employee("Shit Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addEmployee(new Employee(2, "Shit Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         addSimpleRequirement(rotaEngine, "LaterDay", 1);
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
@@ -98,7 +98,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(2).withTimeAtStartOfDay());
 
@@ -115,8 +115,8 @@ public class RotaEngineTest {
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("LaterDay", LocalTime.parse("11:00"), LocalTime.parse("12:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
-        rotaEngine.addEmployee(new Employee("Shit Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addEmployee(new Employee(2, "Shit Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         addSimpleRequirement(rotaEngine, "LaterDay", 1);
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(2).withTimeAtStartOfDay());
@@ -134,8 +134,8 @@ public class RotaEngineTest {
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("LaterDay", LocalTime.parse("11:00"), LocalTime.parse("12:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
-        rotaEngine.addEmployee(new Employee("Shit Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addEmployee(new Employee(2, "Shit Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         addSimpleRequirement(rotaEngine, "LaterDay", 1);
         rotaEngine.addRules(new MaxConsecutiveShiftRule("Day", 1));
@@ -164,7 +164,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.addRules(new MaxConsecutiveShiftRule("Day", 4));
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(5).withTimeAtStartOfDay());
@@ -178,8 +178,8 @@ public class RotaEngineTest {
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day2", LocalTime.parse("11:30"), LocalTime.parse("12:30")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day3", LocalTime.parse("12:30"), LocalTime.parse("13:30")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day4", LocalTime.parse("13:30"), LocalTime.parse("14:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
-        rotaEngine.addEmployee(new Employee("Shit Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addEmployee(new Employee(2, "Shit Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         addSimpleRequirement(rotaEngine, "Day2", 1);
         addSimpleRequirement(rotaEngine, "Day3", 1);
@@ -219,7 +219,7 @@ public class RotaEngineTest {
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day2", LocalTime.parse("11:30"), LocalTime.parse("12:30")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day3", LocalTime.parse("12:30"), LocalTime.parse("13:30")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day4", LocalTime.parse("13:30"), LocalTime.parse("14:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         addSimpleRequirement(rotaEngine, "Day2", 1);
         addSimpleRequirement(rotaEngine, "Day3", 1);
@@ -233,7 +233,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.addRules(new MaxHoursPerWeekRule(6));
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
@@ -252,7 +252,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.addRules(new MaxHoursPerWeekRule(4));
         rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(1).withTimeAtStartOfDay());
@@ -263,7 +263,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("12:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.addRules(new MaxHoursPerWeekRule(4));
         DateTime monday = getNextMonday();
@@ -276,7 +276,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("12:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.addRules(new MaxHoursPerWeekRule(4));
         DateTime sunday = getNextMonday().minusDays(1);
@@ -293,7 +293,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("23:00"), LocalTime.parse("01:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Night", 1);
         rotaEngine.addRules(new MaxHoursPerWeekRule(3));
         DateTime sunday = getNextMonday().minusDays(1);
@@ -310,7 +310,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("01:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Night", 1);
         rotaEngine.addRules(new MaxHoursPerWeekRule(2));
         DateTime sunday = getNextMonday().minusDays(1);
@@ -327,7 +327,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("01:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Night", 1);
         rotaEngine.addRules(new MaxHoursPerWeekRule(3));
         DateTime sunday = getNextMonday().minusDays(1);
@@ -341,7 +341,7 @@ public class RotaEngineTest {
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("01:00")));
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("12:00"), LocalTime.parse("15:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Night", 1);
         rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
         rotaEngine.addRules(new MaxHoursPerWeekRule(3));
@@ -355,7 +355,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(6));
         DateTime sunday = getNextMonday().minusDays(1);
@@ -371,7 +371,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Day", 1);
         rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(6));
         DateTime sunday = getNextMonday().minusDays(1);
@@ -384,7 +384,7 @@ public class RotaEngineTest {
         RotaEngine rotaEngine = new RotaEngine();
 
         rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("22:00"), LocalTime.parse("02:00")));
-        rotaEngine.addEmployee(new Employee("Real Ben"));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
         addSimpleRequirement(rotaEngine, "Night", 1);
         rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(6));
         DateTime saturday = getNextMonday().minusDays(2);
@@ -395,7 +395,23 @@ public class RotaEngineTest {
         Assert.assertEquals(3, rotaEngine.getEmployees().get(0).getShifts().size());
     }
 
-    // todo: test interrim check rebalances employees (how?)
+    @Test
+    public void testWorkerGetsAShiftOneShiftTwoWorkersTwoDaysOneEach() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addEmployee(new Employee(2, "Shit Ben"));
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(5));
+        rotaEngine.assignShifts(DateTime.now().withTimeAtStartOfDay(), DateTime.now().plusDays(2).withTimeAtStartOfDay());
+
+        List<Employee> employees = rotaEngine.getEmployees();
+        Assert.assertEquals(2, employees.size());
+        for (Employee employee : employees) {
+            Assert.assertEquals(1, employee.getShifts().size());
+        }
+    }
 
     // todo: test final check throws/doesn't throw...
 

@@ -16,31 +16,11 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
         this.maxAverageHours = maxAverageHours;
     }
 
-    public boolean employeeCanWorkShift(Employee employee, Shift shift) {
-        List<Shift> shifts = employee.getShifts();
-
-        if (shifts.size() == 0)
-            return ShiftHelper.CalculateShiftHours(shift) <= maxAverageHours;
-
-        int weekCount;
-        int newShiftWeek = shift.getStartTime().getWeekOfWeekyear();
-        int hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(shift);
-        for (Shift shiftToCheck : shifts) {
-            if (shiftToCheck.getStartTime().getWeekOfWeekyear() == newShiftWeek) {
-                hoursPerShiftWeek += ShiftHelper.CalculateShiftHours(shift);
-                if (hoursPerShiftWeek > maxAverageHours) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     // other tests:
-        // check multiple weeks
-        // check fails if last hour of shift breaks
-        // check fails if breaks with half of shift on second week
-        // check passes if lots of hours per week but none over threshold
+    // check multiple weeks
+    // check fails if last hour of shift breaks
+    // check fails if breaks with half of shift on second week
+    // check passes if lots of hours per week but none over threshold
 
     @Override
     public boolean passesPreCheck(DateTime startDate, DateTime endDate, Map<String, ShiftDefinition> shiftDefinitions,
@@ -68,7 +48,7 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 LocalTime endTime = shiftDefinition.getEndTime();
                 if (shiftDefinition.getStartTime().isAfter(shiftDefinition.getEndTime())
                         && dt.getDayOfWeek() == 7) {
-                    endTime = new LocalTime(0, 0, 0);
+                    endTime = LocalTime.MIDNIGHT;
                     hoursCarried = ShiftHelper.CalculateShiftHours(endTime, shiftDefinition.getEndTime());
                 }
 
@@ -82,13 +62,12 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
     @Override
     public void interrimCheck(List<Employee> employees) {
         for (Employee employee : employees) {
-            int runningTotal = 0;
+            int employeeTotalHours = 0;
             for (Shift shift : employee.getShifts()) {
-                int weekOfWeekyear = shift.getStartTime().getWeekOfWeekyear();
-                int shiftHours = ShiftHelper.CalculateShiftHours(shift);
+                employeeTotalHours += ShiftHelper.CalculateShiftHours(shift);
             }
+            employee.setPriorityWeight(employeeTotalHours);
         }
-        // check average hours per week for each employee and reweight based on that
     }
 
     @Override

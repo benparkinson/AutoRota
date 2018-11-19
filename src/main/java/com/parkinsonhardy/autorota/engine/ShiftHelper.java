@@ -6,7 +6,6 @@ import org.joda.time.Period;
 
 public class ShiftHelper {
 
-
     public static int CalculateShiftHours(Shift shift) {
         Period difference = new Period(shift.getStartTime(), shift.getEndTime());
         return difference.getHours();
