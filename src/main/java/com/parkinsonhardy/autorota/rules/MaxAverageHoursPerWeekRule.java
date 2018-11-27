@@ -4,7 +4,7 @@ import com.parkinsonhardy.autorota.engine.*;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
-it
+
 import java.util.List;
 import java.util.Map;
 
