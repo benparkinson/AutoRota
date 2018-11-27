@@ -56,6 +56,9 @@ public class RotaEngine {
                     continue;
                 }
                 ShiftDefinition shiftDefinition = shiftDefinitionsByType.get(shiftRequirement.getShiftType());
+                if (shiftDefinition == null) {
+                    throw new RotaException(String.format("Could not find shift definition for shift type: %s", shiftRequirement.getShiftType()));
+                }
                 for (int i = 0; i < shiftRequirement.getMinEmployees(); i++) {
                     DateTime endDate;
                     if (shiftDefinition.getEndTime().isBefore(shiftDefinition.getStartTime())) {

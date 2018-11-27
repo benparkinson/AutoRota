@@ -4,7 +4,7 @@ import com.parkinsonhardy.autorota.engine.*;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
-
+it
 import java.util.List;
 import java.util.Map;
 
@@ -16,29 +16,19 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
         this.maxAverageHours = maxAverageHours;
     }
 
-    // other tests:
-    // check multiple weeks
-    // check fails if last hour of shift breaks
-    // check fails if breaks with half of shift on second week
-    // check passes if lots of hours per week but none over threshold
-
     @Override
     public boolean passesPreCheck(DateTime startDate, DateTime endDate, Map<String, ShiftDefinition> shiftDefinitions,
                                   List<ShiftRequirement> shiftRequirements, List<Employee> employees) {
         // calculate required hours per week and whether or not it'll be possible to assign shifts and not break rule
-        int totalPerWeek = 0;
+        int totalHours = 0;
         int week = startDate.getWeekOfWeekyear();
-        int hoursCarried = 0;
+        int weekCount = 1;
         for (DateTime dt = startDate.withTimeAtStartOfDay();
              dt.isBefore(endDate.withTimeAtStartOfDay().getMillis());
              dt = dt.plusDays(1)) {
             if (dt.getWeekOfWeekyear() != week) {
                 week = dt.getWeekOfWeekyear();
-                if ((totalPerWeek / employees.size()) > maxAverageHours) {
-                    return false;
-                }
-                totalPerWeek = hoursCarried;
-                hoursCarried = 0;
+                weekCount++;
             }
             for (ShiftRequirement shiftRequirement : shiftRequirements) {
                 if (shiftRequirement.getDayOfWeek() != dt.getDayOfWeek()) {
@@ -46,17 +36,11 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 }
                 ShiftDefinition shiftDefinition = shiftDefinitions.get(shiftRequirement.getShiftType());
                 LocalTime endTime = shiftDefinition.getEndTime();
-                if (shiftDefinition.getStartTime().isAfter(shiftDefinition.getEndTime())
-                        && dt.getDayOfWeek() == 7) {
-                    endTime = LocalTime.MIDNIGHT;
-                    hoursCarried = ShiftHelper.CalculateShiftHours(endTime, shiftDefinition.getEndTime());
-                }
-
                 int hoursPerShift = ShiftHelper.CalculateShiftHours(shiftDefinition.getStartTime(), endTime);
-                totalPerWeek += hoursPerShift * shiftRequirement.getMinEmployees();
+                totalHours += hoursPerShift * shiftRequirement.getMinEmployees();
             }
         }
-        return totalPerWeek / employees.size() <= maxAverageHours;
+        return (totalHours / employees.size() / weekCount) <= maxAverageHours;
     }
 
     @Override
@@ -70,8 +54,27 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
         }
     }
 
+    // should just be for sanity
     @Override
     public void finalCheck(List<Employee> employees) throws RotaException {
-        // check the results
+        for (Employee employee : employees) {
+            int totalHours = 0;
+            Integer week = null;
+            int weekCount = 0;
+            for (Shift shift : employee.getShifts()) {
+                if (week == null || shift.getStartTime().getWeekOfWeekyear() != week) {
+                    week = shift.getStartTime().getWeekOfWeekyear();
+                    weekCount++;
+                }
+                if (shift.getEndTime().getWeekOfWeekyear() != week) {
+                    week = shift.getEndTime().getWeekOfWeekyear();
+                    weekCount++;
+                }
+                totalHours += ShiftHelper.CalculateShiftHours(shift);
+            }
+            if (totalHours / weekCount > maxAverageHours) {
+                throw new RotaException(String.format("Employee: %s got too many hours per week on average!", employee));
+            }
+        }
     }
 }
