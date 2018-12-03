@@ -26,13 +26,11 @@ public class ShiftHelper {
 
     public static int CalculateShiftHours(DateTime startTime, DateTime endTime) {
         Duration difference;
-        if (startTime.isBefore(endTime)) {
-            difference = new Duration(startTime, endTime);
-        } else {
-            difference = new Duration(DateTime.now().withTime(startTime.toLocalTime()),
-                    DateTime.now().plusDays(1).withTime(endTime.toLocalTime()));
+        if (startTime.equals(endTime)) {
+            return 0;
         }
 
+        difference = new Duration(startTime, endTime);
         return Math.toIntExact(difference.getStandardHours());
     }
 }

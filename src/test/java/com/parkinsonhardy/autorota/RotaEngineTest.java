@@ -4,6 +4,7 @@ import com.parkinsonhardy.autorota.engine.*;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.rules.*;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -169,6 +170,42 @@ public class RotaEngineTest {
     }
 
     @Test
+    public void testMaxConsecutiveShiftRulePassesIfDayBreak() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 2));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 3));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 5));
+        rotaEngine.addRules(new MaxConsecutiveShiftRule("Day", 3));
+        DateTime monday = getNextMonday();
+        DateTime friday = monday.plusDays(5);
+        rotaEngine.assignShifts(monday, friday);
+
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 4);
+    }
+
+    @Test
+    public void testMaxConsecutiveShiftRulePassesIfDayBreak2() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 2));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 4));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 5));
+        rotaEngine.addRules(new MaxConsecutiveShiftRule("Day", 2));
+        DateTime monday = getNextMonday();
+        DateTime friday = monday.plusDays(5);
+        rotaEngine.assignShifts(monday, friday);
+
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 4);
+    }
+
+    @Test
     public void testMinHoursBetweenShiftsRule() throws RotaException {
         RotaEngine rotaEngine = new RotaEngine();
 
@@ -227,6 +264,23 @@ public class RotaEngineTest {
     }
 
     @Test
+    public void testMinHoursBetweenShiftsRulePassesMultipleDays() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30")));
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day2", LocalTime.parse("12:30"), LocalTime.parse("13:30")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day2", 1, 3));
+        rotaEngine.addRules(new MinHoursBetweenShiftsRule(2));
+        DateTime monday = getNextMonday();
+        DateTime wednesday = monday.plusDays(3);
+        rotaEngine.assignShifts(monday, wednesday);
+
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 2);
+    }
+
+    @Test
     public void testMaxHoursPerWeekRuleAssignsShift() throws RotaException {
         RotaEngine rotaEngine = new RotaEngine();
 
@@ -282,8 +336,7 @@ public class RotaEngineTest {
         rotaEngine.assignShifts(sunday, threeDaysLater);
 
         List<Employee> employees = rotaEngine.getEmployees();
-        Assert.assertEquals(1, employees.size());
-        Assert.assertEquals(3, employees.get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(employees, 3);
     }
 
     @Test
@@ -299,8 +352,7 @@ public class RotaEngineTest {
         rotaEngine.assignShifts(sunday, twoDaysLater);
 
         List<Employee> employees = rotaEngine.getEmployees();
-        Assert.assertEquals(1, employees.size());
-        Assert.assertEquals(2, employees.get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(employees, 2);
     }
 
     @Test
@@ -316,8 +368,7 @@ public class RotaEngineTest {
         rotaEngine.assignShifts(sunday, oneDayLater);
 
         List<Employee> employees = rotaEngine.getEmployees();
-        Assert.assertEquals(1, employees.size());
-        Assert.assertEquals(1, employees.get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(employees, 1);
     }
 
     @Test(expected = RotaException.class)
@@ -360,8 +411,7 @@ public class RotaEngineTest {
         DateTime oneDayLater = sunday.plusDays(1);
         rotaEngine.assignShifts(sunday, oneDayLater);
 
-        Assert.assertEquals(1, rotaEngine.getEmployees().size());
-        Assert.assertEquals(1, rotaEngine.getEmployees().get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 1);
     }
 
     @Test(expected = RotaException.class)
@@ -389,8 +439,7 @@ public class RotaEngineTest {
         DateTime monday = saturday.plusDays(3);
         rotaEngine.assignShifts(saturday, monday);
 
-        Assert.assertEquals(1, rotaEngine.getEmployees().size());
-        Assert.assertEquals(3, rotaEngine.getEmployees().get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 3);
     }
 
     @Test
@@ -405,8 +454,7 @@ public class RotaEngineTest {
         DateTime monday = sunday.plusDays(8);
         rotaEngine.assignShifts(sunday, monday);
 
-        Assert.assertEquals(1, rotaEngine.getEmployees().size());
-        Assert.assertEquals(8, rotaEngine.getEmployees().get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 8);
     }
 
     @Test(expected = RotaException.class)
@@ -452,8 +500,7 @@ public class RotaEngineTest {
         DateTime thursday = monday.plusDays(4);
         rotaEngine.assignShifts(monday, thursday);
 
-        Assert.assertEquals(1, rotaEngine.getEmployees().size());
-        Assert.assertEquals(4, rotaEngine.getEmployees().get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 4);
     }
 
     @Test(expected = RotaException.class)
@@ -500,8 +547,7 @@ public class RotaEngineTest {
         DateTime saturday = monday.plusDays(6);
         rotaEngine.assignShifts(monday, saturday);
 
-        Assert.assertEquals(1, rotaEngine.getEmployees().size());
-        Assert.assertEquals(6, rotaEngine.getEmployees().get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 6);
     }
 
     @Test
@@ -516,8 +562,7 @@ public class RotaEngineTest {
         DateTime saturday = monday.plusDays(6);
         rotaEngine.assignShifts(monday, saturday);
 
-        Assert.assertEquals(1, rotaEngine.getEmployees().size());
-        Assert.assertEquals(6, rotaEngine.getEmployees().get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 6);
     }
 
     @Test(expected = RotaException.class)
@@ -570,8 +615,132 @@ public class RotaEngineTest {
         DateTime saturday = monday.plusDays(6);
         rotaEngine.assignShifts(monday, saturday);
 
-        Assert.assertEquals(1, rotaEngine.getEmployees().size());
-        Assert.assertEquals(6, rotaEngine.getEmployees().get(0).getShifts().size());
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 6);
+    }
+
+    @Test
+    public void testMinHoursAfterShiftRuleDoesntThrowDayBreak() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:00"), LocalTime.parse("11:00")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 2));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 4));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 5));
+        rotaEngine.addRules(new MinHoursAfterConsecutiveShiftsRule("Day", 3, 47));
+        DateTime monday = getNextMonday();
+        DateTime saturday = monday.plusDays(6);
+        rotaEngine.assignShifts(monday, saturday);
+
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 4);
+    }
+
+    @Test
+    public void testMinHoursAfterShiftRuleDoesntThrowDayBreak2() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:00"), LocalTime.parse("11:00")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 2));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 3));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 5));
+        rotaEngine.addRules(new MinHoursAfterConsecutiveShiftsRule("Day", 3, 20));
+        DateTime monday = getNextMonday();
+        DateTime saturday = monday.plusDays(6);
+        rotaEngine.assignShifts(monday, saturday);
+
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 4);
+    }
+
+    @Test(expected = RotaException.class)
+    public void testMinHoursAfterShiftRuleThrows2() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:00"), LocalTime.parse("11:00")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 1));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 2));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 3));
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Day", 1, 5));
+        rotaEngine.addRules(new MinHoursAfterConsecutiveShiftsRule("Day", 3, 50));
+        DateTime monday = getNextMonday();
+        DateTime saturday = monday.plusDays(6);
+        rotaEngine.assignShifts(monday, saturday);
+    }
+
+    @Test
+    public void testMinHoursAfterShiftRuleThrows3() throws RotaException {
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:00"), LocalTime.parse("11:00")));
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day2", LocalTime.parse("12:00"), LocalTime.parse("13:00")));
+        rotaEngine.addEmployee(new Employee(1, "Real Ben"));
+        addSimpleRequirement(rotaEngine, "Day2", 1);
+        addSimpleRequirement(rotaEngine, "Day", 1);
+        rotaEngine.addRules(new MinHoursAfterConsecutiveShiftsRule("Day", 1, 50));
+        DateTime monday = getNextMonday();
+        DateTime saturday = monday.plusDays(4);
+        rotaEngine.assignShifts(monday, saturday);
+
+        checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 8);
+    }
+
+    private void checkSingleEmployeeHasShiftCount(List<Employee> employees, int i) {
+        Assert.assertEquals(1, employees.size());
+        Assert.assertEquals(i, employees.get(0).getShifts().size());
+    }
+
+    @Test
+    public void realTest() throws RotaException {
+        DateTimeZone.setDefault(DateTimeZone.UTC);
+
+        RotaEngine rotaEngine = new RotaEngine();
+
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("08:30"), LocalTime.parse("17:00")));
+        rotaEngine.addShiftDefinition(new ShiftDefinition("LongDay", LocalTime.parse("08:30"), LocalTime.parse("21:00")));
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("20:30"), LocalTime.parse("09:00")));
+        rotaEngine.addEmployee(new Employee(1, "Doctor Ben"));
+        rotaEngine.addEmployee(new Employee(2, "Doctor Dee"));
+        rotaEngine.addEmployee(new Employee(3, "Doctor Suede"));
+        rotaEngine.addEmployee(new Employee(4, "Doctor Wilson"));
+        rotaEngine.addEmployee(new Employee(5, "Doctor Hercules"));
+        rotaEngine.addEmployee(new Employee(6, "Doctor Doctor"));
+        rotaEngine.addEmployee(new Employee(7, "Doctor Competent"));
+        rotaEngine.addEmployee(new Employee(8, "Doctor Test"));
+        rotaEngine.addEmployee(new Employee(9, "Doctor Jones"));
+        rotaEngine.addEmployee(new Employee(10, "The Doctor"));
+        rotaEngine.addEmployee(new Employee(11, "Doctor Octopus"));
+        rotaEngine.addEmployee(new Employee(12, "Doctor Doom"));
+        addSimpleRequirement(rotaEngine, "Day", 2);
+        addSimpleRequirement(rotaEngine, "LongDay", 2);
+        addSimpleRequirement(rotaEngine, "Night", 2);
+        rotaEngine.addRules(new MinHoursBetweenShiftsRule(11));
+        rotaEngine.addRules(new MaxConsecutiveShiftRule("LongDay", 5));
+        rotaEngine.addRules(new MaxConsecutiveShiftRule("Night", 4));
+        rotaEngine.addRules(new MaxHoursPerWeekRule(72));
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(48));
+        rotaEngine.addRules(new MinHoursAfterConsecutiveShiftsRule("LongDay", 4, 48));
+        rotaEngine.addRules(new MinHoursAfterConsecutiveShiftsRule("Night", new IntegerMatcher(3, 4), 46));
+
+        DateTime monday = getNextMonday();
+        DateTime sixWeeksFromNow = monday.plusWeeks(6);
+        rotaEngine.assignShifts(monday, sixWeeksFromNow);
+
+        printRota(rotaEngine);
+    }
+
+    private void printRota(RotaEngine rotaEngine) {
+        for (Employee employee : rotaEngine.getEmployees()) {
+            System.out.print(employee.getName());
+            System.out.print(",");
+            for (Shift shift : employee.getShifts()) {
+                System.out.printf("%s,%s,%s", shift.getShiftType(), shift.getStartTime(), shift.getEndTime());
+                System.out.print(",,");
+            }
+            System.out.print("\n");
+        }
     }
 
     private DateTime getNextMonday() {

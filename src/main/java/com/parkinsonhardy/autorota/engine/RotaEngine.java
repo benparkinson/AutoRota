@@ -6,8 +6,11 @@ import com.parkinsonhardy.autorota.rules.Rule;
 import org.joda.time.DateTime;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class RotaEngine {
+
+    private static final Logger logger = Logger.getLogger(RotaEngine.class.getName());
 
     private Map<String, ShiftDefinition> shiftDefinitionsByType = new HashMap<>();
     private List<ShiftRequirement> shiftRequirements = new ArrayList<>();
@@ -96,6 +99,7 @@ public class RotaEngine {
     private boolean shiftIsAcceptable(Employee employee, Shift shift) {
         for (Rule rule : rules) {
             if (!rule.employeeCanWorkShift(employee, shift)) {
+                logger.info(String.format("Employee: %s cannot work shift: %s. Fails rule: %s", employee.getName(), shift.toString(), rule.getName()));
                 return false;
             }
         }

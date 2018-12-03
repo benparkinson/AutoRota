@@ -7,4 +7,6 @@ public interface Rule {
 
     boolean employeeCanWorkShift(Employee employee, Shift shift);
 
+    String getName();
+
 }

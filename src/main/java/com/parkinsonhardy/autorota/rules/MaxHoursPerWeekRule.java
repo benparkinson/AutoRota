@@ -16,6 +16,11 @@ public class MaxHoursPerWeekRule implements Rule {
     }
 
     @Override
+    public String getName() {
+        return String.format("Max Hours Per Week Rule: %d", maxHours);
+    }
+
+    @Override
     public boolean employeeCanWorkShift(Employee employee, Shift shift) {
         List<Shift> shifts = employee.getShifts();
 

@@ -28,6 +28,12 @@ public class MinHoursAfterConsecutiveShiftsRule implements Rule {
     }
 
     @Override
+    public String getName() {
+        return "Min Hours After Consecutive Shifts Rule: " + shiftType + ", hours rest required: " + hoursRestAfterConsecutiveShifts + "," +
+                "consecutive shifts to check: " + consecutiveShiftCount.toString();
+    }
+
+    @Override
     public boolean employeeCanWorkShift(Employee employee, Shift shift) {
         List<Shift> shifts = employee.getShifts();
 
@@ -38,6 +44,7 @@ public class MinHoursAfterConsecutiveShiftsRule implements Rule {
         Collections.sort(shifts);
 
         Shift previousShift = null;
+        Shift lastShiftChecked = null;
         int numberOfSameShift = 0;
         for (int i = shifts.size() - 1; i > -1; i--) {
             Shift shiftToCheck = shifts.get(i);
@@ -50,8 +57,24 @@ public class MinHoursAfterConsecutiveShiftsRule implements Rule {
                 }
             }
 
+            if (lastShiftChecked != null) {
+                // check if day has been skipped between shifts (then don't apply rule)
+                int dayOfYear = shiftToCheck.getStartTime().getDayOfYear();
+                int dayOfYear1 = lastShiftChecked.getStartTime().getDayOfYear();
+
+                if (!(shiftToCheck.getShiftType().equals(shiftType)
+                        && consecutiveShiftCount.matches(numberOfSameShift + 1))) {
+                    if (dayOfYear1 - dayOfYear > 1) {
+                        return true;
+                    }
+                }
+            }
+
             if (shiftToCheck.getShiftType().equals(shiftType)) {
                 numberOfSameShift++;
+            } else {
+                // not consecutive shifts
+                return true;
             }
 
             if (consecutiveShiftCount.matches(numberOfSameShift)) {
@@ -65,6 +88,7 @@ public class MinHoursAfterConsecutiveShiftsRule implements Rule {
                     return false;
                 }
             }
+            lastShiftChecked = shiftToCheck;
         }
 
         return true;

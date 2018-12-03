@@ -18,4 +18,12 @@ public class IntegerMatcher {
         return intsThatMatch.contains(candidate);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Integer i : intsThatMatch) {
+            sb.append(i).append(" ");
+        }
+        return sb.toString();
+    }
 }

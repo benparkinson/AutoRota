@@ -2,6 +2,7 @@ package com.parkinsonhardy.autorota.rules;
 
 import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
+import com.parkinsonhardy.autorota.engine.ShiftHelper;
 import org.joda.time.Period;
 
 import java.util.Collections;
@@ -13,6 +14,11 @@ public class MinHoursBetweenShiftsRule implements Rule {
 
     public MinHoursBetweenShiftsRule(int minHours) {
         this.minHours = minHours;
+    }
+
+    @Override
+    public String getName() {
+        return String.format("Min Hours Between Shifts: %d", minHours);
     }
 
     @Override
@@ -37,8 +43,8 @@ public class MinHoursBetweenShiftsRule implements Rule {
                 }
             }
 
-            Period difference = new Period(shiftToCheck.getEndTime(), shift.getStartTime());
-            if (difference.getHours() < minHours)
+            int shiftHoursDifference = ShiftHelper.CalculateShiftHours(shiftToCheck.getEndTime(), shift.getStartTime());
+            if (shiftHoursDifference < minHours)
                 return false;
         }
         return true;
