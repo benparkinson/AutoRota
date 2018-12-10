@@ -3,7 +3,6 @@ package com.parkinsonhardy.autorota.rules;
 import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
 import com.parkinsonhardy.autorota.engine.ShiftHelper;
-import org.joda.time.Period;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +43,24 @@ public class MinHoursBetweenShiftsRule implements Rule {
             }
 
             int shiftHoursDifference = ShiftHelper.CalculateShiftHours(shiftToCheck.getEndTime(), shift.getStartTime());
+            if (shiftHoursDifference < minHours)
+                return false;
+        }
+
+        boolean foundNextShift = false;
+
+        for (int i = 0; i < shifts.size(); i++) {
+            Shift shiftToCheck = shifts.get(i);
+            if (!foundNextShift) {
+                if (shiftToCheck.getStartTime().isAfter(shift.getEndTime()) ||
+                        shiftToCheck.getStartTime().equals(shift.getEndTime())) {
+                    foundNextShift = true;
+                } else {
+                    continue;
+                }
+            }
+
+            int shiftHoursDifference = ShiftHelper.CalculateShiftHours(shift.getEndTime(), shiftToCheck.getStartTime());
             if (shiftHoursDifference < minHours)
                 return false;
         }

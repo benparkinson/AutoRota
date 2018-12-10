@@ -5,6 +5,7 @@ import com.parkinsonhardy.autorota.exceptions.RotaException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 weekCount++;
             }
             for (ShiftRequirement shiftRequirement : shiftRequirements) {
-                if (shiftRequirement.getDayOfWeek() != dt.getDayOfWeek()) {
+                if (!shiftRequirement.shiftRequiredOnDay(DayOfWeek.of(dt.getDayOfWeek()))) {
                     continue;
                 }
                 ShiftDefinition shiftDefinition = shiftDefinitions.get(shiftRequirement.getShiftType());
@@ -43,21 +44,13 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
         return (totalHours / employees.size() / weekCount) <= maxAverageHours;
     }
 
-    @Override
-    public void interrimCheck(List<Employee> employees) {
-        for (Employee employee : employees) {
-            int employeeTotalHours = 0;
-            for (Shift shift : employee.getShifts()) {
-                employeeTotalHours += ShiftHelper.CalculateShiftHours(shift);
-            }
-            employee.setPriorityWeight(employeeTotalHours);
-        }
-    }
-
     // should just be for sanity
     @Override
     public void finalCheck(List<Employee> employees) throws RotaException {
         for (Employee employee : employees) {
+            if (employee.getShifts().size() == 0) {
+                continue;
+            }
             int totalHours = 0;
             Integer week = null;
             int weekCount = 0;

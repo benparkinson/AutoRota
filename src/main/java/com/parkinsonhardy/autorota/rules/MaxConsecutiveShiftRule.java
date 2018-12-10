@@ -2,6 +2,7 @@ package com.parkinsonhardy.autorota.rules;
 
 import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
+import org.joda.time.DateTime;
 
 import java.util.Collections;
 import java.util.List;

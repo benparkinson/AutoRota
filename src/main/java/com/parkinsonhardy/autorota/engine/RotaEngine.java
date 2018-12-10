@@ -5,6 +5,7 @@ import com.parkinsonhardy.autorota.rules.HolisticRule;
 import com.parkinsonhardy.autorota.rules.Rule;
 import org.joda.time.DateTime;
 
+import java.time.DayOfWeek;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -22,7 +23,10 @@ public class RotaEngine {
         this.shiftDefinitionsByType.put(shiftDefinition.getShiftType(), shiftDefinition);
     }
 
-    public void addEmployee(Employee employee) {
+    public void addEmployee(Employee employee) throws RotaException {
+        if (employees.contains(employee)) {
+            throw new RotaException(String.format("Employee: %s already added!", employee));
+        }
         this.employees.add(employee);
     }
 
@@ -30,7 +34,7 @@ public class RotaEngine {
         this.shiftRequirements.add(shiftRequirement);
     }
 
-    public void addRules(Rule rule) {
+    public void addRule(Rule rule) {
         this.rules.add(rule);
     }
 
@@ -50,12 +54,9 @@ public class RotaEngine {
             }
         }
 
-        for (DateTime dt = from.withTimeAtStartOfDay(); dt.isBefore(to.withTimeAtStartOfDay().getMillis()); dt = dt.plusDays(1)) {
-            for (HolisticRule holisticRule : holisticRules) {
-                holisticRule.interrimCheck(employees);
-            }
-            for (ShiftRequirement shiftRequirement : shiftRequirements) {
-                if (shiftRequirement.getDayOfWeek() != dt.getDayOfWeek()) {
+        for (ShiftRequirement shiftRequirement : shiftRequirements) {
+            for (DateTime dt = from.withTimeAtStartOfDay(); dt.isBefore(to.withTimeAtStartOfDay().getMillis()); dt = dt.plusDays(1)) {
+                if (!shiftRequirement.shiftRequiredOnDay(DayOfWeek.of(dt.getDayOfWeek()))) {
                     continue;
                 }
                 ShiftDefinition shiftDefinition = shiftDefinitionsByType.get(shiftRequirement.getShiftType());
@@ -71,9 +72,19 @@ public class RotaEngine {
                     }
                     Shift shift = new Shift(shiftDefinition.getShiftType(),
                             dt.withTime(shiftDefinition.getStartTime()), endDate.withTime(shiftDefinition.getEndTime()));
-                    Employee employee = getAvailableEmployee(shift);
+                    List<Employee> employees = getAvailableEmployees(shift);
+                    Employee toAssign = null;
+                    for (Employee employee : employees) {
+                        if (shiftIsAcceptable(employee, shift)) {
+                            toAssign = employee;
+                            break;
+                        }
+                    }
 
-                    employee.addShift(shift);
+                    if (toAssign == null) {
+                        throw new RotaException(String.format("Can't find an available employee for shift! Shift: %s", shift.toString()));
+                    }
+                    toAssign.addShift(shift);
                 }
             }
         }
@@ -83,17 +94,54 @@ public class RotaEngine {
         }
     }
 
-    private Employee getAvailableEmployee(Shift shift) throws RotaException {
-        employees.sort(Comparator.comparingInt(Employee::getPriorityWeight));
-        for (Employee employee : employees) {
-            if (employee.isAvailableForShift(shift)) {
-                if (shiftIsAcceptable(employee, shift)) {
-                    return employee;
+    private List<Employee> getAvailableEmployees(Shift shift) {
+        boolean priorityShift = false;
+        ShiftDefinition shiftDefinition = shiftDefinitionsByType.get(shift.getShiftType());
+        if (shiftDefinition.isAllocateInBlocks() || shift.getStartTime().getDayOfWeek() == DayOfWeek.SUNDAY.getValue()
+                || shift.getStartTime().getDayOfWeek() == DayOfWeek.SATURDAY.getValue()) {
+            priorityShift = true;
+        }
+        List<Employee> ret = new ArrayList<>();
+        Employee priorityEmployee;
+        for (Employee e : employees) {
+            boolean isPriority = false;
+            if (priorityShift) {
+                List<Shift> shiftsForEmployee = e.getShifts();
+                int shiftCount = shiftsForEmployee.size();
+                if (shiftCount > 0) {
+                    Shift previousShift = shiftsForEmployee.get((shiftCount - 1));
+                    if (previousShift.getShiftType().equals(shift.getShiftType())
+                            && previousShift.getStartTime().withTimeAtStartOfDay().equals(
+                            shift.getStartTime().withTimeAtStartOfDay().minusDays(1))) {
+                        priorityEmployee = e;
+                        isPriority = true;
+                        priorityEmployee.setPriorityWeight(Integer.MIN_VALUE);
+                    }
                 }
+            }
+
+            if (!isPriority) {
+                int hours = sumEmployeeHours(e);
+                e.setPriorityWeight(hours);
             }
         }
 
-        throw new RotaException(String.format("Can't find an available employee for shift! Shift: %s", shift.toString()));
+        employees.sort(Comparator.comparingInt(Employee::getPriorityWeight));
+        for (Employee employee : employees) {
+            if (employee.isAvailableForShift(shift)) {
+                ret.add(employee);
+            }
+        }
+
+        return ret;
+    }
+
+    private int sumEmployeeHours(Employee employee) {
+        int employeeTotalHours = 0;
+        for (Shift shift : employee.getShifts()) {
+            employeeTotalHours += ShiftHelper.CalculateShiftHours(shift);
+        }
+        return employeeTotalHours;
     }
 
     private boolean shiftIsAcceptable(Employee employee, Shift shift) {

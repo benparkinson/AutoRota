@@ -1,15 +1,21 @@
 package com.parkinsonhardy.autorota.engine;
 
+import java.time.DayOfWeek;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class ShiftRequirement {
 
     private String shiftType;
     private int minEmployees;
-    private int dayOfWeek;
+    private Set<DayOfWeek> daysOfWeek;
 
-    public ShiftRequirement(String shiftType, int minEmployees, int dayOfWeek) {
+    public ShiftRequirement(String shiftType, int minEmployees, DayOfWeek... daysOfWeek) {
         this.shiftType = shiftType;
         this.minEmployees = minEmployees;
-        this.dayOfWeek = dayOfWeek;
+        this.daysOfWeek = new HashSet<>();
+        this.daysOfWeek.addAll(Arrays.asList(daysOfWeek));
     }
 
     public String getShiftType() {
@@ -20,7 +26,7 @@ public class ShiftRequirement {
         return minEmployees;
     }
 
-    public int getDayOfWeek() {
-        return dayOfWeek;
+    public boolean shiftRequiredOnDay(DayOfWeek dayOfWeek) {
+        return daysOfWeek.contains(dayOfWeek);
     }
 }

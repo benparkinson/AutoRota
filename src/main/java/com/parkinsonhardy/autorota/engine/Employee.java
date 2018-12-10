@@ -1,5 +1,7 @@
 package com.parkinsonhardy.autorota.engine;
 
+import org.joda.time.Interval;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,10 +41,9 @@ public class Employee {
     }
 
     private boolean shiftsOverlap(Shift shift, Shift potentialShift) {
-        return shift.equals(potentialShift) || (potentialShift.getStartTime().isBefore(shift.getEndTime())
-                && potentialShift.getEndTime().isAfter(shift.getEndTime()))
-                || (potentialShift.getEndTime().isAfter(shift.getStartTime())
-                && potentialShift.getStartTime().isBefore(shift.getStartTime()));
+        Interval interval1 = new Interval(shift.getStartTime(), shift.getEndTime());
+        Interval interval2 = new Interval(potentialShift.getStartTime(), potentialShift.getEndTime());
+        return interval1.overlaps(interval2);
     }
 
     public int getPriorityWeight() {
@@ -64,5 +65,13 @@ public class Employee {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "name='" + name + '\'' +
+                ", shifts=" + shifts.size() +
+                '}';
     }
 }

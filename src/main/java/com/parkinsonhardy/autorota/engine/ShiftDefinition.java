@@ -6,14 +6,20 @@ import java.util.Objects;
 
 public class ShiftDefinition {
 
-    private String shiftType;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private final String shiftType;
+    private final LocalTime startTime;
+    private final LocalTime endTime;
+    private final boolean allocateInBlocks;
 
     public ShiftDefinition(String shiftType, LocalTime startTime, LocalTime endTime) {
+        this(shiftType, startTime, endTime, false);
+    }
+
+    public ShiftDefinition(String shiftType, LocalTime startTime, LocalTime endTime, boolean allocateInBlocks) {
         this.shiftType = shiftType;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.allocateInBlocks = allocateInBlocks;
     }
 
     public String getShiftType() {
@@ -26,6 +32,10 @@ public class ShiftDefinition {
 
     public LocalTime getEndTime() {
         return endTime;
+    }
+
+    public boolean isAllocateInBlocks() {
+        return allocateInBlocks;
     }
 
     @Override

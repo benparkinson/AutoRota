@@ -11,10 +11,8 @@ import java.util.Map;
 
 public interface HolisticRule {
 
-    boolean passesPreCheck(DateTime startDate, DateTime endDate, Map<String, ShiftDefinition> shiftDefinitions, List<ShiftRequirement> shiftRequirements,
-                           List<Employee> employees);
-
-    void interrimCheck(List<Employee> employees);
+    boolean passesPreCheck(DateTime startDate, DateTime endDate, Map<String, ShiftDefinition> shiftDefinitions,
+                           List<ShiftRequirement> shiftRequirements, List<Employee> employees);
 
     void finalCheck(List<Employee> employees) throws RotaException;
 
