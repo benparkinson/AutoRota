@@ -2,6 +2,7 @@ package com.parkinsonhardy.autorota.rules;
 
 import com.parkinsonhardy.autorota.engine.*;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
+import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 

@@ -1,11 +1,9 @@
 package com.parkinsonhardy.autorota.rules;
 
-import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
-import com.parkinsonhardy.autorota.engine.ShiftHelper;
+import org.joda.time.Duration;
 
 import java.time.DayOfWeek;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,64 +17,37 @@ public class MaxConsecutiveWeekendsRule implements Rule {
     }
 
     @Override
-    public boolean employeeCanWorkShift(Employee employee, Shift shift) {
-        if (!shiftIsOnWeekend(shift)) {
+    public boolean shiftsPassesRule(List<Shift> shifts) {
+        if (shifts.size() < 2) {
             return true;
         }
 
-        List<Shift> shifts = employee.getShifts();
-
-        if (shifts.size() == 0)
-            return true;
-
-        // sort for sanity, should already be sorted
-        Collections.sort(shifts);
-
-        int consecutiveWeekends = 1;
         Set<Integer> weeksOfYearWithShifts = new HashSet<>();
-        weeksOfYearWithShifts.add(shift.getStartTime().getWeekOfWeekyear());
-
-        boolean foundPreviousShift = false;
-        Shift lastWeekendShift = null;
-        for (int i = shifts.size() - 1; i > -1; i--) {
-            Shift shiftToCheck = shifts.get(i);
-            if (!foundPreviousShift) {
-                if (shiftToCheck.getEndTime().isBefore(shift.getStartTime()) ||
-                        shiftToCheck.getEndTime().equals(shift.getStartTime())) {
-                    foundPreviousShift = true;
-                } else {
-                    continue;
-                }
-            }
-
-            if (!shiftIsOnWeekend(shiftToCheck)) {
+        int consecutiveWeekendShiftCount = 0;
+        Shift lastWeekendShiftChecked = null;
+        for (Shift shift : shifts) {
+            if (!shiftIsOnWeekend(shift))
                 continue;
+
+            if (weeksOfYearWithShifts.add(shift.getStartTime().getWeekOfWeekyear()))
+                consecutiveWeekendShiftCount++;
+
+            if (lastWeekendShiftChecked != null) {
+                if (moreThanOneWeekBetweenShifts(lastWeekendShiftChecked, shift))
+                    consecutiveWeekendShiftCount = 0;
             }
 
-            if (lastWeekendShift == null) {
-                lastWeekendShift = shift;
-            }
-
-            int lastWeekendShiftWeek = lastWeekendShift.getStartTime().getWeekOfWeekyear();
-            int thisWeekendShiftWeek = shiftToCheck.getStartTime().getWeekOfWeekyear();
-
-            if (Math.abs(lastWeekendShiftWeek - thisWeekendShiftWeek) > 1) {
-                return true;
-            }
-
-
-            if (weeksOfYearWithShifts.add(shiftToCheck.getStartTime().getWeekOfWeekyear())) {
-                consecutiveWeekends++;
-            }
-
-            if (consecutiveWeekends > maxConsecutiveWeekends) {
+            if (consecutiveWeekendShiftCount > maxConsecutiveWeekends)
                 return false;
-            }
 
-            lastWeekendShift = shiftToCheck;
+            lastWeekendShiftChecked = shift;
         }
-
         return true;
+    }
+
+    private boolean moreThanOneWeekBetweenShifts(Shift lastShiftChecked, Shift shift) {
+        Duration duration = new Duration(lastShiftChecked.getStartTime(), shift.getStartTime());
+        return duration.getStandardDays() > 7;
     }
 
     private boolean shiftIsOnWeekend(Shift shift) {

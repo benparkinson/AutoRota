@@ -1,6 +1,7 @@
 package com.parkinsonhardy.autorota.engine;
 
 import com.parkinsonhardy.autorota.exceptions.RotaException;
+import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import com.parkinsonhardy.autorota.rules.HolisticRule;
 import com.parkinsonhardy.autorota.rules.Rule;
 import org.joda.time.DateTime;
@@ -75,7 +76,10 @@ public class RotaEngine {
                     List<Employee> employees = getAvailableEmployees(shift);
                     Employee toAssign = null;
                     for (Employee employee : employees) {
-                        if (shiftIsAcceptable(employee, shift)) {
+                        List<Shift> shiftsCopy = new ArrayList<>(employee.getShifts());
+                        shiftsCopy.add(shift);
+                        Collections.sort(shiftsCopy);
+                        if (shiftIsAcceptable(shiftsCopy)) {
                             toAssign = employee;
                             break;
                         }
@@ -144,10 +148,9 @@ public class RotaEngine {
         return employeeTotalHours;
     }
 
-    private boolean shiftIsAcceptable(Employee employee, Shift shift) {
+    private boolean shiftIsAcceptable(List<Shift> shifts) {
         for (Rule rule : rules) {
-            if (!rule.employeeCanWorkShift(employee, shift)) {
-                logger.info(String.format("Employee: %s cannot work shift: %s. Fails rule: %s", employee.getName(), shift.toString(), rule.getName()));
+            if (!rule.shiftsPassesRule(shifts)) {
                 return false;
             }
         }

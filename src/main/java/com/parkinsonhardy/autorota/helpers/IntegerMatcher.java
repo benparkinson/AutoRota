@@ -1,4 +1,4 @@
-package com.parkinsonhardy.autorota.rules;
+package com.parkinsonhardy.autorota.helpers;
 
 import java.util.HashSet;
 import java.util.Set;

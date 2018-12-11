@@ -1,5 +1,6 @@
-package com.parkinsonhardy.autorota.engine;
+package com.parkinsonhardy.autorota.helpers;
 
+import com.parkinsonhardy.autorota.engine.Shift;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;

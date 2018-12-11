@@ -1,10 +1,9 @@
 package com.parkinsonhardy.autorota.rules;
 
-import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
-import com.parkinsonhardy.autorota.engine.ShiftHelper;
+import com.parkinsonhardy.autorota.helpers.ShiftHelper;
+import org.joda.time.DateTime;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MinHoursBetweenShiftsRule implements Rule {
@@ -21,47 +20,22 @@ public class MinHoursBetweenShiftsRule implements Rule {
     }
 
     @Override
-    public boolean employeeCanWorkShift(Employee employee, Shift shift) {
-        List<Shift> shifts = employee.getShifts();
-
-        if (shifts.size() == 0)
+    public boolean shiftsPassesRule(List<Shift> shifts) {
+        if (shifts.size() < 2) {
             return true;
-
-        // sort for sanity, should already be sorted
-        Collections.sort(shifts);
-
-        boolean foundPreviousShift = false;
-        for (int i = shifts.size() - 1; i > -1; i--) {
-            Shift shiftToCheck = shifts.get(i);
-            if (!foundPreviousShift) {
-                if (shiftToCheck.getEndTime().isBefore(shift.getStartTime()) ||
-                        shiftToCheck.getEndTime().equals(shift.getStartTime())) {
-                    foundPreviousShift = true;
-                } else {
-                    continue;
-                }
-            }
-
-            int shiftHoursDifference = ShiftHelper.CalculateShiftHours(shiftToCheck.getEndTime(), shift.getStartTime());
-            if (shiftHoursDifference < minHours)
-                return false;
         }
 
-        boolean foundNextShift = false;
-
-        for (int i = 0; i < shifts.size(); i++) {
-            Shift shiftToCheck = shifts.get(i);
-            if (!foundNextShift) {
-                if (shiftToCheck.getStartTime().isAfter(shift.getEndTime()) ||
-                        shiftToCheck.getStartTime().equals(shift.getEndTime())) {
-                    foundNextShift = true;
-                } else {
-                    continue;
-                }
+        Shift lastShift = null;
+        for (Shift shift : shifts) {
+            if (lastShift == null) {
+                lastShift = shift;
+                continue;
             }
 
-            int shiftHoursDifference = ShiftHelper.CalculateShiftHours(shift.getEndTime(), shiftToCheck.getStartTime());
-            if (shiftHoursDifference < minHours)
+            DateTime endTime = lastShift.getEndTime();
+            DateTime startTime = shift.getStartTime();
+
+            if (ShiftHelper.CalculateShiftHours(endTime, startTime) < minHours)
                 return false;
         }
         return true;

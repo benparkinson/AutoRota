@@ -1,11 +1,12 @@
 package com.parkinsonhardy.autorota.rules;
 
-import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
+
+import java.util.List;
 
 public interface Rule {
 
-    boolean employeeCanWorkShift(Employee employee, Shift shift);
+    boolean shiftsPassesRule(List<Shift> shifts);
 
     String getName();
 

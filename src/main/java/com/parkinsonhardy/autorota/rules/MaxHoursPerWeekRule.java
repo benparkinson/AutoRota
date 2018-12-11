@@ -2,7 +2,7 @@ package com.parkinsonhardy.autorota.rules;
 
 import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
-import com.parkinsonhardy.autorota.engine.ShiftHelper;
+import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import org.joda.time.LocalTime;
 
 import java.util.List;
@@ -21,48 +21,31 @@ public class MaxHoursPerWeekRule implements Rule {
     }
 
     @Override
-    public boolean employeeCanWorkShift(Employee employee, Shift shift) {
-        List<Shift> shifts = employee.getShifts();
+    public boolean shiftsPassesRule(List<Shift> shifts) {
+        int hoursPerWeek = 0;
+        int currentWeek = -1;
+        int hoursToCarry = 0;
 
-        if (shift.getStartTime().getWeekOfWeekyear() != shift.getEndTime().getWeekOfWeekyear()) {
-            int newShiftWeek = shift.getStartTime().getWeekOfWeekyear();
-            int hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(shift.getStartTime().toLocalTime(),
-                    LocalTime.MIDNIGHT);
-            boolean firstWeek = checkWeekCanTakeMoreHours(newShiftWeek, hoursPerShiftWeek, shifts);
-            newShiftWeek = shift.getEndTime().getWeekOfWeekyear();
-            hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(LocalTime.MIDNIGHT, shift.getEndTime().toLocalTime());
-            boolean secondWeek = checkWeekCanTakeMoreHours(newShiftWeek, hoursPerShiftWeek, shifts);
-            return firstWeek && secondWeek;
-        } else {
-            if (shifts.size() == 0)
-                return ShiftHelper.CalculateShiftHours(shift) <= maxHours;
-
-            int newShiftWeek = shift.getStartTime().getWeekOfWeekyear();
-            int hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(shift);
-            return checkWeekCanTakeMoreHours(newShiftWeek, hoursPerShiftWeek, shifts);
-        }
-    }
-
-    private boolean checkWeekCanTakeMoreHours(int weekOfYear, int hoursToAdd, List<Shift> shifts) {
-        int hoursPerShiftWeek = hoursToAdd;
-        for (Shift shiftToCheck : shifts) {
-            if (shiftToCheck.getStartTime().getWeekOfWeekyear() == weekOfYear) {
-                LocalTime endTime = shiftToCheck.getEndTime().toLocalTime();
-                if (shiftToCheck.getStartTime().getWeekOfWeekyear() !=
-                        shiftToCheck.getEndTime().getWeekOfWeekyear()) {
-                    endTime = LocalTime.MIDNIGHT;
-                }
-
-                hoursPerShiftWeek += ShiftHelper.CalculateShiftHours(shiftToCheck.getStartTime().toLocalTime(), endTime);
-                if (hoursPerShiftWeek > maxHours) {
-                    return false;
-                }
-            } else if (shiftToCheck.getEndTime().getWeekOfWeekyear() == weekOfYear) {
-                hoursPerShiftWeek += ShiftHelper.CalculateShiftHours(LocalTime.MIDNIGHT, shiftToCheck.getEndTime().toLocalTime());
-                if (hoursPerShiftWeek > maxHours) {
-                    return false;
-                }
+        for (Shift shift : shifts) {
+            int weekOfWeekyear = shift.getStartTime().getWeekOfWeekyear();
+            if (weekOfWeekyear != currentWeek) {
+                hoursPerWeek = hoursToCarry;
+                currentWeek = weekOfWeekyear;
             }
+
+            if (shift.getStartTime().getWeekOfWeekyear() != shift.getEndTime().getWeekOfWeekyear()) {
+                int hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(shift.getStartTime().toLocalTime(),
+                        LocalTime.MIDNIGHT);
+                hoursPerWeek += hoursPerShiftWeek;
+                hoursToCarry = ShiftHelper.CalculateShiftHours(LocalTime.MIDNIGHT, shift.getEndTime().toLocalTime());
+            } else {
+                hoursToCarry = 0;
+                int hoursPerShift = ShiftHelper.CalculateShiftHours(shift);
+                hoursPerWeek += hoursPerShift;
+            }
+
+            if (hoursPerWeek > maxHours)
+                return false;
         }
         return true;
     }

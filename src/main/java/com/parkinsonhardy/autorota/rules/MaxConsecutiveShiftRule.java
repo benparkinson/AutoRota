@@ -1,16 +1,11 @@
 package com.parkinsonhardy.autorota.rules;
 
-import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
-import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class MaxConsecutiveShiftRule implements Rule {
-
-    private static Logger logger = Logger.getLogger(MaxConsecutiveShiftRule.class.getName());
 
     private String shiftType;
     private int maxConsecutiveShifts;
@@ -26,56 +21,34 @@ public class MaxConsecutiveShiftRule implements Rule {
     }
 
     @Override
-    public boolean employeeCanWorkShift(Employee employee, Shift shift) {
-        List<Shift> shifts = employee.getShifts();
-
-        if (shifts.size() == 0)
+    public boolean shiftsPassesRule(List<Shift> shifts) {
+        if (shifts.size() < 2) {
             return true;
+        }
 
-        if (!shift.getShiftType().equals(shiftType))
-            return true;
+        int consecutiveShiftCount = 0;
+        Shift lastShiftChecked = null;
+        for (Shift shift : shifts) {
+            if (shift.getShiftType().equals(shiftType))
+                consecutiveShiftCount++;
+            else
+                consecutiveShiftCount = 0;
 
-        // sort for sanity, should already be sorted
-        Collections.sort(shifts);
-
-        boolean foundPreviousShift = false;
-        int numberOfSameShift = 0;
-        Shift lastShift = null;
-        for (int i = shifts.size() - 1; i > -1; i--) {
-            Shift shiftToCheck = shifts.get(i);
-            if (!foundPreviousShift) {
-                if (shiftToCheck.getEndTime().isBefore(shift.getStartTime())
-                        || shiftToCheck.getEndTime().equals(shift.getStartTime())) {
-                    foundPreviousShift = true;
-                    int dayOfYear = shiftToCheck.getStartTime().getDayOfYear();
-                    int dayOfYear1 = shift.getStartTime().getDayOfYear();
-                    if (dayOfYear1 - dayOfYear > 1) {
-                        return true;
-                    }
-                } else {
-                    continue;
-                }
+            if (lastShiftChecked != null) {
+                if (moreThanOneDayBetweenShifts(lastShiftChecked, shift))
+                    consecutiveShiftCount = 0;
             }
 
-            if (shiftToCheck.getShiftType().equals(shift.getShiftType())) {
-                if (lastShift != null) {
-                    int dayOfYear = lastShift.getStartTime().getDayOfYear();
-                    int dayOfYear1 = shiftToCheck.getStartTime().getDayOfYear();
-                    if (dayOfYear - dayOfYear1 > 1) {
-                        return true;
-                    }
-                }
-                numberOfSameShift++;
-                if (numberOfSameShift >= maxConsecutiveShifts) {
-                    logger.info(String.format("Cannot assign shift to: %s as it breached max consecutive shifts of %d for %s",
-                            employee.getName(), maxConsecutiveShifts, shiftType));
-                    return false;
-                }
-            } else {
-                return true;
-            }
-            lastShift = shiftToCheck;
+            if (consecutiveShiftCount > maxConsecutiveShifts)
+                return false;
+
+            lastShiftChecked = shift;
         }
         return true;
+    }
+
+    private boolean moreThanOneDayBetweenShifts(Shift lastShiftChecked, Shift shift) {
+        Duration duration = new Duration(lastShiftChecked.getStartTime(), shift.getStartTime());
+        return duration.getStandardDays() > 1;
     }
 }
