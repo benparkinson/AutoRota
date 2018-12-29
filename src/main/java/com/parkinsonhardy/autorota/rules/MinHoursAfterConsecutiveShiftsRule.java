@@ -59,8 +59,17 @@ public class MinHoursAfterConsecutiveShiftsRule implements Rule {
                 consecutiveShiftCount = 0;
 
             if (lastShiftChecked != null) {
-                if (moreThanOneDayBetweenShifts(lastShiftChecked, shift))
+                if (moreThanOneDayBetweenShifts(lastShiftChecked, shift)) {
+                    if (consecutiveShiftCountMatcher.matches(consecutiveShiftCount)) {
+                        if (!consecutiveShiftCountMatcher.matches(consecutiveShiftCount + 1)) {
+                            if (ShiftHelper.CalculateShiftHours(lastShiftChecked.getEndTime(), shift.getStartTime()) <
+                                    hoursRestAfterConsecutiveShifts)
+                                return false;
+                        }
+                    }
+
                     consecutiveShiftCount = 0;
+                }
             }
 
             if (consecutiveShiftCountMatcher.matches(consecutiveShiftCount)) {

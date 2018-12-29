@@ -17,7 +17,7 @@ public class MinHoursAfterConsecutiveShiftsRuleTest extends RotaEngineTestBase {
 
     @Before
     public void setUp() {
-        rotaEngine = new RotaEngine();
+        rotaEngine = super.getRotaEngine();
     }
 
     @Test
@@ -168,7 +168,18 @@ public class MinHoursAfterConsecutiveShiftsRuleTest extends RotaEngineTestBase {
         addShiftRequirementForEveryDay(rotaEngine, "Day", 1);
         rotaEngine.addRule(new MinHoursAfterConsecutiveShiftsRule("Day", 1, 50));
         DateTime monday = getNextMonday();
-        DateTime friday = monday.plusDays(4);
+        DateTime friday = monday.plusDays(5);
+        rotaEngine.assignShifts(monday, friday);
+    }
+
+    @Test(expected = RotaException.class)
+    public void testMinHoursAfterShiftRuleThrows4() throws RotaException {
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Night", LocalTime.parse("20:30"), LocalTime.parse("09:00")));
+        addSingleEmployee();
+        rotaEngine.addShiftRequirement(new ShiftRequirement("Night", 1, MONDAY, TUESDAY, WEDNESDAY, FRIDAY));
+        rotaEngine.addRule(new MinHoursAfterConsecutiveShiftsRule("Night", new IntegerMatcher(3, 4), 46));
+        DateTime monday = getNextMonday();
+        DateTime friday = monday.plusDays(5);
         rotaEngine.assignShifts(monday, friday);
     }
 

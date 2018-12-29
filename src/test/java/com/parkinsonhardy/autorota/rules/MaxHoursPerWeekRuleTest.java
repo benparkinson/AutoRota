@@ -20,7 +20,7 @@ public class MaxHoursPerWeekRuleTest extends RotaEngineTestBase {
 
     @Before
     public void setUp() {
-        rotaEngine = new RotaEngine();
+        rotaEngine = super.getRotaEngine();
     }
 
     @Test

@@ -8,13 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MaxConsecutiveWeekendsRule implements Rule {
+public class NoMoreThanOneConsecutiveWeekendsRule implements Rule {
 
-    private final int maxConsecutiveWeekends;
+    private static final int ONE = 1;
 
-    public MaxConsecutiveWeekendsRule(int maxConsecutiveWeekends) {
-        this.maxConsecutiveWeekends = maxConsecutiveWeekends;
-    }
+    public NoMoreThanOneConsecutiveWeekendsRule() { }
 
     @Override
     public boolean shiftsPassesRule(List<Shift> shifts) {
@@ -37,7 +35,7 @@ public class MaxConsecutiveWeekendsRule implements Rule {
                     consecutiveWeekendShiftCount = 0;
             }
 
-            if (consecutiveWeekendShiftCount > maxConsecutiveWeekends)
+            if (consecutiveWeekendShiftCount > ONE)
                 return false;
 
             lastWeekendShiftChecked = shift;

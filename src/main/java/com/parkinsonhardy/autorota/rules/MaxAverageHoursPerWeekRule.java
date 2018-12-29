@@ -1,12 +1,16 @@
 package com.parkinsonhardy.autorota.rules;
 
-import com.parkinsonhardy.autorota.engine.*;
+import com.parkinsonhardy.autorota.engine.Employee;
+import com.parkinsonhardy.autorota.engine.Shift;
+import com.parkinsonhardy.autorota.engine.ShiftDefinition;
+import com.parkinsonhardy.autorota.engine.ShiftRequirement;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import java.time.DayOfWeek;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,16 +46,16 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 totalHours += hoursPerShift * shiftRequirement.getMinEmployees();
             }
         }
-        return (totalHours / employees.size() / weekCount) <= maxAverageHours;
+        return ((double)totalHours / (double)employees.size() / (double)weekCount) <= maxAverageHours;
     }
 
-    // should just be for sanity
     @Override
-    public void finalCheck(List<Employee> employees) throws RotaException {
+    public boolean passesFinalCheck(List<Employee> employees) {
         for (Employee employee : employees) {
             if (employee.getShifts().size() == 0) {
                 continue;
             }
+            Collections.sort(employee.getShifts());
             int totalHours = 0;
             Integer week = null;
             int weekCount = 0;
@@ -66,9 +70,10 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 }
                 totalHours += ShiftHelper.CalculateShiftHours(shift);
             }
-            if (totalHours / weekCount > maxAverageHours) {
-                throw new RotaException(String.format("Employee: %s got too many hours per week on average!", employee));
+            if ((double)totalHours / (double)weekCount > maxAverageHours) {
+                return false;
             }
         }
+        return true;
     }
 }

@@ -14,11 +14,11 @@ public class RotaEngine {
 
     private static final Logger logger = Logger.getLogger(RotaEngine.class.getName());
 
-    private Map<String, ShiftDefinition> shiftDefinitionsByType = new HashMap<>();
-    private List<ShiftRequirement> shiftRequirements = new ArrayList<>();
-    private List<Employee> employees = new ArrayList<>();
-    private List<Rule> rules = new ArrayList<>();
-    private List<HolisticRule> holisticRules = new ArrayList<>();
+    protected List<ShiftRequirement> shiftRequirements = new ArrayList<>();
+    protected List<Employee> employees = new ArrayList<>();
+    protected Map<String, ShiftDefinition> shiftDefinitionsByType = new HashMap<>();
+    protected List<Rule> rules = new ArrayList<>();
+    protected List<HolisticRule> holisticRules = new ArrayList<>();
 
     public void addShiftDefinition(ShiftDefinition shiftDefinition) {
         this.shiftDefinitionsByType.put(shiftDefinition.getShiftType(), shiftDefinition);
@@ -94,11 +94,11 @@ public class RotaEngine {
         }
 
         for (HolisticRule holisticRule : holisticRules) {
-            holisticRule.finalCheck(employees);
+            holisticRule.passesFinalCheck(employees);
         }
     }
 
-    private List<Employee> getAvailableEmployees(Shift shift) {
+    protected List<Employee> getAvailableEmployees(Shift shift) {
         boolean priorityShift = false;
         ShiftDefinition shiftDefinition = shiftDefinitionsByType.get(shift.getShiftType());
         if (shiftDefinition.isAllocateInBlocks() || shift.getStartTime().getDayOfWeek() == DayOfWeek.SUNDAY.getValue()
@@ -133,11 +133,40 @@ public class RotaEngine {
         employees.sort(Comparator.comparingInt(Employee::getPriorityWeight));
         for (Employee employee : employees) {
             if (employee.isAvailableForShift(shift)) {
+                if (shiftIsOnWeekend(shift) && employeeWorkedConsecutiveWeekend(shift, employee))
+                    continue;
+
                 ret.add(employee);
             }
         }
 
         return ret;
+    }
+
+    private boolean employeeWorkedConsecutiveWeekend(Shift shift, Employee employee) {
+        int week;
+        if (shift.getStartTime().getDayOfWeek() == DayOfWeek.SATURDAY.getValue() ||
+        shift.getStartTime().getDayOfWeek() == DayOfWeek.SUNDAY.getValue()) {
+            week = shift.getStartTime().getWeekOfWeekyear();
+        } else {
+            week = shift.getEndTime().getWeekOfWeekyear();
+        }
+
+        for (Shift s : employee.getShifts()) {
+            if (shiftIsOnWeekend(s)) {
+                if (Math.abs(s.getStartTime().getWeekOfWeekyear() - week) == 1)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean shiftIsOnWeekend(Shift shift) {
+        return shift.getStartTime().getDayOfWeek() == DayOfWeek.SUNDAY.getValue()
+                || shift.getEndTime().getDayOfWeek() == DayOfWeek.SUNDAY.getValue()
+                || shift.getStartTime().getDayOfWeek() == DayOfWeek.SATURDAY.getValue()
+                || shift.getEndTime().getDayOfWeek() == DayOfWeek.SATURDAY.getValue();
     }
 
     private int sumEmployeeHours(Employee employee) {

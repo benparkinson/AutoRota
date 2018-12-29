@@ -18,6 +18,10 @@ public class Employee {
         this.name = name;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -30,8 +34,12 @@ public class Employee {
         this.shifts.add(shift);
     }
 
+    public void removeShift(Shift shift) {
+        // todo consider different collection to make this more efficient. Needs to be ordered for rules to work ideally
+        this.shifts.remove(shift);
+    }
+
     public boolean isAvailableForShift(Shift potentialShift) {
-        // todo order shifts? should be more efficient
         for (Shift shift : shifts) {
             if (shiftsOverlap(shift, potentialShift)) {
                 return false;

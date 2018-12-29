@@ -13,6 +13,10 @@ public class RotaEngineTestBase {
 
     protected RotaEngine rotaEngine;
 
+    protected RotaEngine getRotaEngine() {
+        return new ExperimentalRotaEngine();
+    }
+
     protected void addSingleEmployee() throws RotaException {
         rotaEngine.addEmployee(new Employee(1, "Real Ben"));
     }
@@ -22,9 +26,15 @@ public class RotaEngineTestBase {
         rotaEngine.addEmployee(new Employee(2, "Shit Ben"));
     }
 
-    protected void checkSingleEmployeeHasShiftCount(List<Employee> employees, int i) {
-        Assert.assertEquals(1, employees.size());
-        Assert.assertEquals(i, employees.get(0).getShifts().size());
+    protected void checkSingleEmployeeHasShiftCount(List<Employee> employees, int shiftCount) {
+        checkAllEmployeeHaveShiftCount(employees, shiftCount, 1);
+    }
+
+    protected void checkAllEmployeeHaveShiftCount(List<Employee> employees, int shiftCount, int numEmployees) {
+        Assert.assertEquals(numEmployees, employees.size());
+        for (Employee e : employees) {
+            Assert.assertEquals(shiftCount, e.getShifts().size());
+        }
     }
 
     protected DateTime getNextMonday() {
@@ -42,7 +52,7 @@ public class RotaEngineTestBase {
         addShiftToEmployee(shiftDefinition, dateTime, rotaEngine.getEmployees().get(0));
     }
 
-    protected void addShiftToEmployee(ShiftDefinition shiftDefinition, DateTime dateTime,  Employee employee) {
+    protected void addShiftToEmployee(ShiftDefinition shiftDefinition, DateTime dateTime, Employee employee) {
         DateTime endTime = shiftDefinition.getStartTime().isBefore(shiftDefinition.getEndTime()) ?
                 dateTime.withTime(shiftDefinition.getEndTime()) :
                 dateTime.plusDays(1).withTime(shiftDefinition.getEndTime());

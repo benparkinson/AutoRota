@@ -13,7 +13,7 @@ public class MaxAverageHoursPerWeekRuleTest extends RotaEngineTestBase {
 
     @Before
     public void setUp() {
-        rotaEngine = new RotaEngine();
+        rotaEngine = super.getRotaEngine();
     }
 
     @Test
@@ -51,6 +51,45 @@ public class MaxAverageHoursPerWeekRuleTest extends RotaEngineTestBase {
         rotaEngine.assignShifts(saturday, monday);
 
         checkSingleEmployeeHasShiftCount(rotaEngine.getEmployees(), 3);
+    }
+
+    @Test
+    public void testMaxAverageHoursPerWeekFinalCheckSplitsShifts() throws RotaException {
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
+        addTwoEmployees();
+        addShiftRequirementForEveryDay(rotaEngine, "Day", 1);
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(15));
+        DateTime monday = getNextMonday();
+        DateTime sixDaysLater = monday.plusDays(6);
+        rotaEngine.assignShifts(monday, sixDaysLater);
+
+        checkAllEmployeeHaveShiftCount(rotaEngine.getEmployees(), 3, 2);
+    }
+
+    @Test
+    public void testMaxAverageHoursPerWeekFinalCheckSplitsShifts2() throws RotaException {
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("11:30"), LocalTime.parse("15:30")));
+        addTwoEmployees();
+        addShiftRequirementForEveryDay(rotaEngine, "Day", 1);
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(14));
+        DateTime monday = getNextMonday();
+        DateTime twoWeeksLater = monday.plusDays(14);
+        rotaEngine.assignShifts(monday, twoWeeksLater);
+
+        checkAllEmployeeHaveShiftCount(rotaEngine.getEmployees(), 7, 2);
+    }
+
+    @Test
+    public void testMaxAverageHoursPerWeekFinalCheckSplitsShifts3() throws RotaException {
+        rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("11:30"), LocalTime.parse("15:30")));
+        addTwoEmployees();
+        addShiftRequirementForEveryDay(rotaEngine, "Day", 1);
+        rotaEngine.addHolisticRule(new MaxAverageHoursPerWeekRule(14));
+        DateTime monday = getNextMonday();
+        DateTime sixWeeksLater = monday.plusWeeks(6);
+        rotaEngine.assignShifts(monday, sixWeeksLater);
+
+        checkAllEmployeeHaveShiftCount(rotaEngine.getEmployees(), 21, 2);
     }
 
 }

@@ -37,6 +37,8 @@ public class MinHoursBetweenShiftsRule implements Rule {
 
             if (ShiftHelper.CalculateShiftHours(endTime, startTime) < minHours)
                 return false;
+
+            lastShift = shift;
         }
         return true;
     }

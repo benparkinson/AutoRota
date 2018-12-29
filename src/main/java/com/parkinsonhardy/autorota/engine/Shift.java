@@ -3,18 +3,21 @@ package com.parkinsonhardy.autorota.engine;
 import org.joda.time.DateTime;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Shift implements Comparable<Shift> {
 
-    private String shiftType;
-    private DateTime startTime;
-    private DateTime endTime;
+    private final String shiftId;
+    private final String shiftType;
+    private final DateTime startTime;
+    private final DateTime endTime;
 
     public Shift(String shiftType, DateTime startTime, DateTime endTime) {
         if (endTime.isBefore(startTime)) {
-            throw new IllegalArgumentException("Wtf");
+            throw new IllegalArgumentException("Shift's end time is before start time!");
         }
 
+        this.shiftId = UUID.randomUUID().toString();
         this.shiftType = shiftType;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -50,13 +53,11 @@ public class Shift implements Comparable<Shift> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Shift shift = (Shift) o;
-        return Objects.equals(shiftType, shift.shiftType) &&
-                Objects.equals(startTime, shift.startTime) &&
-                Objects.equals(endTime, shift.endTime);
+        return shiftId.equals(shift.shiftId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shiftType, startTime, endTime);
+        return Objects.hash(shiftId);
     }
 }

@@ -1,6 +1,5 @@
 package com.parkinsonhardy.autorota.rules;
 
-import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
 import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import org.joda.time.LocalTime;
