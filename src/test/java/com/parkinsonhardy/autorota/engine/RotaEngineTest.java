@@ -3,9 +3,11 @@ package com.parkinsonhardy.autorota.engine;
 import com.parkinsonhardy.autorota.RotaEngineTestBase;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.helpers.IntegerMatcher;
+import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import com.parkinsonhardy.autorota.rules.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Before;
@@ -225,6 +227,7 @@ public class RotaEngineTest extends RotaEngineTestBase {
             for (DateTime dt = startDate; dt.isBefore(endDate.plusDays(1)); dt = dt.plusDays(1)) {
                 sb.append(dt.toString("yyyy-MM-dd")).append(",");
             }
+            sb.append("Number of Days,Number of LongDays,Number of Nights,Total hours,Average hours per week");
             sb.append("\n");
 
             for (DateTime dt = startDate; dt.isBefore(endDate.plusDays(1)); dt = dt.plusDays(1)) {
@@ -240,8 +243,37 @@ public class RotaEngineTest extends RotaEngineTestBase {
                     sb.append(",");
                 }
             }
+
+            if (!sb.toString().endsWith(",")) {
+                sb.append(",");
+            }
+            int numberOfDays = countShifts(employee, "Day");
+            int numberOfLongDays = countShifts(employee, "LongDay");
+            int numberOfNights = countShifts(employee, "Night");
+            int totalHours = countHours(employee);
+            long averageHours = totalHours / (new Duration(startDate, endDate).getStandardDays() / 7);
+            sb.append(numberOfDays).append(",").append(numberOfLongDays).append(",").append(numberOfNights);
+            sb.append(",").append(totalHours).append(",").append(averageHours);
             sb.append("\n\n");
         }
         System.out.println(sb.toString());
+    }
+
+    private int countHours(Employee employee) {
+        int totalHours = 0;
+        for (Shift shift : employee.getShifts()) {
+            totalHours += ShiftHelper.CalculateShiftHours(shift.getStartTime(), shift.getEndTime());
+        }
+        return totalHours;
+    }
+
+    private int countShifts(Employee employee, String shiftType) {
+        int totalHours = 0;
+        for (Shift shift : employee.getShifts()) {
+            if (shift.getShiftType().equals(shiftType)) {
+                totalHours += 1;
+            }
+        }
+        return totalHours;
     }
 }
