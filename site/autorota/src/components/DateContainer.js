@@ -19,7 +19,7 @@ export class DateContainer extends React.Component {
 
     render() {
         return (
-            <div className="Date-container">
+            <div className="Horizontal-container">
                 <DatePicker label="From:" onDateChange={this.handleFromDateChanged} /> 
                 
                 <DatePicker label="To:" onDateChange={this.handleToDateChanged} />

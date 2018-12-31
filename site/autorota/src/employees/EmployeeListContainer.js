@@ -6,21 +6,26 @@ export class EmployeeListContainer extends React.Component {
         super(props);
 
         this.handleAddEmployee = this.handleAddEmployee.bind(this);
+        this.handleDeleteEmployee = this.handleDeleteEmployee.bind(this);
     }
 
     handleAddEmployee() {
         this.props.onAddNewEmployee();
     }
 
+    handleDeleteEmployee(employeeId) {
+        this.props.onDeleteEmployee(employeeId);
+    }
+
     render() {
         const employeeItems = this.props.employees.map((x) =>
-            <EmployeeRow employeeId={x} key={x.toString()}></EmployeeRow>
+            <EmployeeRow onEmployeeDelete={this.handleDeleteEmployee} employeeId={x} key={x.toString()}></EmployeeRow>
         );
         return (
             <div>
-                <h3>Employees</h3>
+                <h4>Employees</h4>
                 {employeeItems}
-                <button onClick={this.handleAddEmployee}>Add</button>
+                <button onClick={this.handleAddEmployee}>add</button>
             </div>);
     }
 }
