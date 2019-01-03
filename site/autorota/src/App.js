@@ -2,22 +2,19 @@ import React, { Component } from 'react';
 import './App.css';
 import { DateContainer } from './components/DateContainer';
 import { EmployeeListContainer } from './employees/EmployeeListContainer';
+import { RuleListContainer } from './rules/RuleListContainer';
 
 class App extends Component {
+  state = {
+    fromDate: '',
+    toDate: ''
+  };
+
   constructor(props) {
     super(props);
-    this.state = {
-      fromDate: '',
-      toDate: '',
-      employees: []
-    };
-
-    this.nextEmployeeId = 0;
 
     this.handleFromDateChange = this.handleFromDateChange.bind(this);
     this.handleToDateChange = this.handleToDateChange.bind(this);
-    this.handleAddNewEmployee = this.handleAddNewEmployee.bind(this);
-    this.handleDeleteEmployee = this.handleDeleteEmployee.bind(this);
   }
 
   handleFromDateChange(newFromDate) {
@@ -26,26 +23,6 @@ class App extends Component {
 
   handleToDateChange(newToDate) {
     this.setState({ toDate: newToDate });
-  }
-
-  createNewEmployee() {
-    return this.nextEmployeeId++;
-  }
-
-  handleAddNewEmployee() {
-    const employee = this.createNewEmployee();
-    this.setState((prevState) => ({
-      employees: prevState.employees.concat([employee])
-    }));
-  }
-
-  handleDeleteEmployee(employeeId) {
-    this.setState((prevState) => ({
-      employees: prevState.employees.filter(function (employee) {
-        return employee !== employeeId
-      }
-      )
-    }));
   }
 
   render() {
@@ -58,9 +35,10 @@ class App extends Component {
             <br />
             {/* temp to show that this Component gets updated with the events raised by child Components */}
             <p>From date: {this.state.fromDate}, To date: {this.state.toDate}</p>
-            <EmployeeListContainer onAddNewEmployee={this.handleAddNewEmployee}
-              onDeleteEmployee={this.handleDeleteEmployee}
-              employees={this.state.employees} />
+            <div className="Horizontal-container">
+            <EmployeeListContainer />
+            <RuleListContainer />
+            </div>
           </div>
         </header>
       </div>
