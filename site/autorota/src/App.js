@@ -3,6 +3,7 @@ import './App.css';
 import { DateContainer } from './components/DateContainer';
 import { EmployeeListContainer } from './employees/EmployeeListContainer';
 import { RuleListContainer } from './rules/RuleListContainer';
+import { ShiftDefinitionContainer } from './shiftdefs/ShiftDefinitionContainer';
 
 class App extends Component {
   state = {
@@ -27,21 +28,28 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <div>
-            <h2>AutoRota</h2>
-            <DateContainer onFromDateChanged={this.handleFromDateChange} onToDateChanged={this.handleToDateChange} />
-            <br />
-            {/* temp to show that this Component gets updated with the events raised by child Components */}
-            <p>From date: {this.state.fromDate}, To date: {this.state.toDate}</p>
-            <div className="Horizontal-container">
-            <EmployeeListContainer />
-            <RuleListContainer />
+      <header>
+        <h2 className="ui header">AutoRota</h2>
+        <div>
+          <DateContainer onFromDateChanged={this.handleFromDateChange} onToDateChanged={this.handleToDateChange} />
+          <br />
+          <div className="ui grid">
+            <div className="ten column row">
+              <ShiftDefinitionContainer />
+            </div>
+            <div className="sixteen column row">
+              <div className="column"></div>
+              <div className="seven wide column">
+                <EmployeeListContainer />
+              </div>
+              <div className="seven wide column">
+                <RuleListContainer />
+              </div>
+              <div className="column"></div>
             </div>
           </div>
-        </header>
-      </div>
+        </div>
+      </header>
     );
   }
 }

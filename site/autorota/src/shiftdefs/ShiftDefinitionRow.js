@@ -1,6 +1,6 @@
 import React from 'react';
 
-export class EmployeeRow extends React.Component {
+export class ShiftDefinitionRow extends React.Component {
     constructor(props) {
         super(props);
 
@@ -8,16 +8,21 @@ export class EmployeeRow extends React.Component {
     }
 
     handleDelete() {
-        this.props.onEmployeeDelete(this.props.employeeId);
+        this.props.onShiftDefDelete(this.props.shiftDefId);
     }
 
     render() {
         return (
-            <div className="ui input">
+            <div>
+                <form className="ui form">Name: <input type="text" />
+                    {' '}
+                    Start: <input type="time" />
+                    {' '}
+                    End: <input type="time" />
+                </form>
                 <button className="ui icon button" onClick={this.handleDelete}>
                     <i className="trash icon"></i>
                 </button>
-                <form className="ui form">Name: <input type="text" /></form>
             </div>
         );
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { EmployeeRow } from './EmployeeRow';
+import FluidCard from '../components/FluidCard';
 
 export class EmployeeListContainer extends React.Component {
     state = {
@@ -37,13 +38,17 @@ export class EmployeeListContainer extends React.Component {
 
     render() {
         const employeeItems = this.state.employees.map((x) =>
-            <EmployeeRow onEmployeeDelete={this.handleDeleteEmployee} employeeId={x} key={x.toString()}></EmployeeRow>
+            <FluidCard key={x}>
+                <EmployeeRow onEmployeeDelete={this.handleDeleteEmployee} employeeId={x} ></EmployeeRow>
+            </FluidCard>
         );
         return (
-            <div>
+            <div >
                 <h4>Employees</h4>
                 {employeeItems}
-                <button onClick={this.handleAddEmployee}>add</button>
+                <button className="ui icon button" onClick={this.handleAddEmployee}>
+                    <i className="add icon"></i>
+                </button>
             </div>);
     }
 }

@@ -21,18 +21,30 @@ export class RuleRow extends React.Component {
     }
 
     render() {
-        const possibleRules = this.props.possibleRules.slice(); // take copy of array to not change props
+        const ruleNames = this.props.possibleRules.map(x => x.name);
         if (this.selectedRuleType) {
-            possibleRules.push(this.selectedRuleType);
+            ruleNames.push(this.selectedRuleType);
         }
-        const options = possibleRules.map((x) =>
-            <option value={x} key={x.toString()}>{x}</option>);
-        return (<div className="Horizontal-container">
-            <button className="Padded" onClick={this.handleDelete}>delete</button>
-            <form>Type:
-                <select value={this.selectedRuleType} onChange={this.handleSelect}>
-                    {options}
-                </select></form>
-        </div>);
+        const options = ruleNames.map((x) =>
+            <option value={x}
+                key={x}>
+                {x}
+            </option>
+        );
+        return (
+            <div className="ui input">
+                <button className="ui icon button" onClick={this.handleDelete}>
+                    <i className="trash icon"></i>
+                </button>
+
+                <form className="ui form">Type:
+                    <select className="ui dropdown"
+                          style={{ maxWidth: '100%' }}
+                            value={this.selectedRuleType} onChange={this.handleSelect}>
+                           {options}
+                    </select>
+                </form>
+            </div>
+        );
     }
 }
