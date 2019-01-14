@@ -2,7 +2,7 @@ package com.parkinsonhardy.autorota.rules;
 
 import com.parkinsonhardy.autorota.engine.Shift;
 import com.parkinsonhardy.autorota.helpers.ShiftHelper;
-import org.joda.time.LocalTime;
+import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -21,29 +21,23 @@ public class MaxHoursPerWeekRule implements Rule {
 
     @Override
     public boolean shiftsPassesRule(List<Shift> shifts) {
-        int hoursPerWeek = 0;
-        int currentWeek = -1;
-        int hoursToCarry = 0;
-
         for (Shift shift : shifts) {
-            int weekOfWeekyear = shift.getStartTime().getWeekOfWeekyear();
-            if (weekOfWeekyear != currentWeek) {
-                hoursPerWeek = hoursToCarry;
-                currentWeek = weekOfWeekyear;
+            float totalHours = 0;
+            DateTime sevenDaysAgo = shift.getEndTime().minusDays(7);
+
+            // go pack previous 7 days and sum hours
+            for (int i = shifts.size() - 1; i > -1; i--) {
+                Shift toAdd = shifts.get(i);
+                if (toAdd.getStartTime().isAfter(shift.getStartTime()))
+                    continue;
+
+                if (toAdd.getStartTime().isBefore(sevenDaysAgo)) {
+                    break;
+                }
+                totalHours += ShiftHelper.CalculateShiftHours(shift);
             }
 
-            if (shift.getStartTime().getWeekOfWeekyear() != shift.getEndTime().getWeekOfWeekyear()) {
-                int hoursPerShiftWeek = ShiftHelper.CalculateShiftHours(shift.getStartTime().toLocalTime(),
-                        LocalTime.MIDNIGHT);
-                hoursPerWeek += hoursPerShiftWeek;
-                hoursToCarry = ShiftHelper.CalculateShiftHours(LocalTime.MIDNIGHT, shift.getEndTime().toLocalTime());
-            } else {
-                hoursToCarry = 0;
-                int hoursPerShift = ShiftHelper.CalculateShiftHours(shift);
-                hoursPerWeek += hoursPerShift;
-            }
-
-            if (hoursPerWeek > maxHours)
+            if (totalHours > maxHours)
                 return false;
         }
         return true;

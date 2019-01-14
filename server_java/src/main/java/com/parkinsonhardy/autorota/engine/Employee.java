@@ -11,7 +11,7 @@ public class Employee {
     private long id;
     private String name;
     private List<Shift> shifts = new ArrayList<>();
-    private int priorityWeight = 0;
+    private float priorityWeight = 0;
 
     public Employee(long id, String name) {
         this.id = id;
@@ -54,11 +54,11 @@ public class Employee {
         return interval1.overlaps(interval2);
     }
 
-    public int getPriorityWeight() {
+    public float getPriorityWeight() {
         return priorityWeight;
     }
 
-    public void setPriorityWeight(int priorityWeight) {
+    public void setPriorityWeight(float priorityWeight) {
         this.priorityWeight = priorityWeight;
     }
 

@@ -11,6 +11,7 @@ import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -198,7 +199,7 @@ public class RotaEngineTest extends RotaEngineTestBase {
         rotaEngine.addRule(new MinHoursAfterConsecutiveShiftsRule("Night", new IntegerMatcher(3, 4), 46));
 
         DateTime monday = DateTime.parse("2019-01-07");
-        DateTime sixWeeksFromNow = monday.plusYears(5);
+        DateTime sixWeeksFromNow = monday.plusWeeks(12);
 
         try {
             rotaEngine.assignShifts(monday, sixWeeksFromNow);
@@ -209,45 +210,68 @@ public class RotaEngineTest extends RotaEngineTestBase {
 
     // todo test year threshold for consecutive weekends rule
     // todo test max consecutive shift rule with year threshold - use jodatime Duration and get days between probs
-    
+
     private void printRota(RotaEngine rotaEngine, DateTime startDate, DateTime endDate) {
         StringBuilder sb = new StringBuilder();
+        sb.append(",");
         for (Employee employee : rotaEngine.getEmployees()) {
-            sb.append(employee.getName()).append("\n");
-            for (DateTime dt = startDate; dt.isBefore(endDate.plusDays(1)); dt = dt.plusDays(1)) {
-                sb.append(dt.toString("yyyy-MM-dd")).append(",");
-            }
-            sb.append("Number of Days,Number of LongDays,Number of Nights,Total hours,Average hours per week");
-            sb.append("\n");
+            sb.append(employee.getName()).append(",");
+        }
 
-            for (DateTime dt = startDate; dt.isBefore(endDate.plusDays(1)); dt = dt.plusDays(1)) {
-                boolean hadShift = false;
+        sb.append("\n");
+
+        for (DateTime dt = startDate; dt.isBefore(endDate); dt = dt.plusDays(1)) {
+            sb.append(dt.toString("yyyy-MM-dd EEE")).append(",");
+
+            for (Employee employee : rotaEngine.getEmployees()) {
                 for (Shift shift : employee.getShifts()) {
                     if (shift.getStartTime().withTimeAtStartOfDay().equals(dt)) {
-                        sb.append(shift.getShiftType()).append(",");
-                        hadShift = true;
+                        sb.append(shift.getShiftType());
                         break;
                     }
                 }
-                if (!hadShift) {
-                    sb.append(",");
-                }
-            }
-
-            if (!sb.toString().endsWith(",")) {
                 sb.append(",");
             }
-            int numberOfDays = countShifts(employee, "Day");
-            int numberOfLongDays = countShifts(employee, "LongDay");
-            int numberOfNights = countShifts(employee, "Night");
-            int totalHours = countHours(employee);
-            long averageHours = totalHours / (new Duration(startDate, endDate).getStandardDays() / 7);
-            sb.append(numberOfDays).append(",").append(numberOfLongDays).append(",").append(numberOfNights);
-            sb.append(",").append(totalHours).append(",").append(averageHours);
-            sb.append("\n\n");
+            sb.append("\n");
         }
+
+        sb.append("Number of Days,");
+        for (Employee employee : rotaEngine.getEmployees()) {
+            int numberOfDays = countShifts(employee, "Day");
+            sb.append(numberOfDays).append(",");
+        }
+        sb.append("\n");
+
+        sb.append("Number of LongDays,");
+        for (Employee employee : rotaEngine.getEmployees()) {
+            int numberOfDays = countShifts(employee, "LongDay");
+            sb.append(numberOfDays).append(",");
+        }
+        sb.append("\n");
+
+        sb.append("Number of Nights,");
+        for (Employee employee : rotaEngine.getEmployees()) {
+            int numberOfDays = countShifts(employee, "Night");
+            sb.append(numberOfDays).append(",");
+        }
+        sb.append("\n");
+
+        sb.append("Total Hours,");
+        for (Employee employee : rotaEngine.getEmployees()) {
+            int totalHours = countHours(employee);
+            sb.append(totalHours).append(",");
+        }
+        sb.append("\n");
+
+        sb.append("Average hours per week,");
+        for (Employee employee : rotaEngine.getEmployees()) {
+            int totalHours = countHours(employee);
+            float averageHours = (float) totalHours / (new Duration(startDate, endDate).getStandardDays() / 7f);
+            sb.append(averageHours).append(",");
+        }
+        sb.append("\n\n");
         System.out.println(sb.toString());
-    }
+}
 
     private int countHours(Employee employee) {
         int totalHours = 0;

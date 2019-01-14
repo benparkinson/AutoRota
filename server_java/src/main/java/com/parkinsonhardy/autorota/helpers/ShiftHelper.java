@@ -8,12 +8,13 @@ import org.joda.time.Period;
 
 public class ShiftHelper {
 
-    public static int CalculateShiftHours(Shift shift) {
+    public static float CalculateShiftHours(Shift shift) {
         Period difference = new Period(shift.getStartTime(), shift.getEndTime());
-        return difference.getHours();
+        int v = difference.getMinutes() + (difference.getHours() * 60);
+        return v / 60f;
     }
 
-    public static int CalculateShiftHours(LocalTime startTime, LocalTime endTime) {
+    public static float CalculateShiftHours(LocalTime startTime, LocalTime endTime) {
         Period difference;
         if (startTime.isBefore(endTime)) {
             difference = new Period(startTime, endTime);
@@ -22,16 +23,16 @@ public class ShiftHelper {
                     DateTime.now().plusDays(1).withTime(endTime));
         }
 
-        return difference.getHours();
+        return (difference.getMinutes() + (difference.getHours() * 60)) / 60f;
     }
 
-    public static int CalculateShiftHours(DateTime startTime, DateTime endTime) {
+    public static float CalculateShiftHours(DateTime startTime, DateTime endTime) {
         Duration difference;
         if (startTime.equals(endTime)) {
             return 0;
         }
 
         difference = new Duration(startTime, endTime);
-        return Math.toIntExact(difference.getStandardHours());
+        return difference.getStandardMinutes() / 60f;
     }
 }

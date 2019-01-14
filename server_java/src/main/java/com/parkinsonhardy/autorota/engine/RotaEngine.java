@@ -86,7 +86,8 @@ public class RotaEngine {
                     }
 
                     if (toAssign == null) {
-                        throw new RotaException(String.format("Can't find an available employee for shift! Shift: %s", shift.toString()));
+                        throw new RotaException(String.format("Can't find an available employee for shift! Shift: %s",
+                                shift.toString()));
                     }
                     toAssign.addShift(shift);
                 }
@@ -98,6 +99,12 @@ public class RotaEngine {
         }
     }
 
+    // to avoid imbalance of shift types, can figure out how many total shifts of each type throughout the period
+    // and then say 'if you are above average (+10% or something) for this time period then stop assigning shifts
+    // of that type (a new rule maybe?)
+
+    // sort employees by blocks, then a score based on average hours per week and the number of shifts of that type
+    // they have so far
     protected List<Employee> getAvailableEmployees(Shift shift) {
         boolean priorityShift = false;
         ShiftDefinition shiftDefinition = shiftDefinitionsByType.get(shift.getShiftType());
@@ -113,24 +120,27 @@ public class RotaEngine {
                 List<Shift> shiftsForEmployee = e.getShifts();
                 int shiftCount = shiftsForEmployee.size();
                 if (shiftCount > 0) {
-                    Shift previousShift = shiftsForEmployee.get((shiftCount - 1));
-                    if (previousShift.getShiftType().equals(shift.getShiftType())
-                            && previousShift.getStartTime().withTimeAtStartOfDay().equals(
-                            shift.getStartTime().withTimeAtStartOfDay().minusDays(1))) {
-                        priorityEmployee = e;
-                        isPriority = true;
-                        priorityEmployee.setPriorityWeight(Integer.MIN_VALUE);
+                    Shift previousShift = getPreviousShift(shiftsForEmployee, shift);
+                    if (previousShift != null) {
+                        if (previousShift.getShiftType().equals(shift.getShiftType())
+                                && previousShift.getStartTime().withTimeAtStartOfDay().equals(
+                                shift.getStartTime().withTimeAtStartOfDay().minusDays(1))) {
+                            priorityEmployee = e;
+                            isPriority = true;
+                            priorityEmployee.setPriorityWeight(-1);
+                        }
                     }
                 }
             }
 
             if (!isPriority) {
-                int hours = sumEmployeeHours(e);
-                e.setPriorityWeight(hours);
+                float hours = sumEmployeeHours(e);
+                float shiftsOfType = sumEmployeeShifts(e, shift.getShiftType());
+                e.setPriorityWeight(hours + shiftsOfType);
             }
         }
 
-        employees.sort(Comparator.comparingInt(Employee::getPriorityWeight));
+        employees.sort(Comparator.comparingDouble(Employee::getPriorityWeight));
         for (Employee employee : employees) {
             if (employee.isAvailableForShift(shift)) {
                 if (shiftIsOnWeekend(shift) && employeeWorkedConsecutiveWeekend(shift, employee))
@@ -141,6 +151,25 @@ public class RotaEngine {
         }
 
         return ret;
+    }
+
+    private float sumEmployeeShifts(Employee employee, String shiftType) {
+        float employeeTotalHours = 0;
+        for (Shift shift : employee.getShifts()) {
+            if (shift.getShiftType().equals(shiftType))
+                employeeTotalHours += ShiftHelper.CalculateShiftHours(shift);
+        }
+        return employeeTotalHours;
+    }
+
+    private Shift getPreviousShift(List<Shift> shiftsForEmployee, Shift shiftToAssign) {
+        for (int i = shiftsForEmployee.size() - 1; i > -1; i--) {
+            Shift shift = shiftsForEmployee.get(i);
+            if (shift.getEndTime().isBefore(shiftToAssign.getStartTime()))
+                return shift;
+        }
+
+        return null;
     }
 
     private boolean employeeWorkedConsecutiveWeekend(Shift shift, Employee employee) {
@@ -162,6 +191,12 @@ public class RotaEngine {
         return false;
     }
 
+    protected boolean shiftIsOnFridaySaturdaySunday(Shift shift) {
+        return shiftIsOnWeekend(shift)
+                || shift.getStartTime().getDayOfWeek() == DayOfWeek.FRIDAY.getValue()
+                || shift.getEndTime().getDayOfWeek() == DayOfWeek.FRIDAY.getValue();
+    }
+
     protected boolean shiftIsOnWeekend(Shift shift) {
         return shift.getStartTime().getDayOfWeek() == DayOfWeek.SUNDAY.getValue()
                 || shift.getEndTime().getDayOfWeek() == DayOfWeek.SUNDAY.getValue()
@@ -169,8 +204,8 @@ public class RotaEngine {
                 || shift.getEndTime().getDayOfWeek() == DayOfWeek.SATURDAY.getValue();
     }
 
-    private int sumEmployeeHours(Employee employee) {
-        int employeeTotalHours = 0;
+    private float sumEmployeeHours(Employee employee) {
+        float employeeTotalHours = 0;
         for (Shift shift : employee.getShifts()) {
             employeeTotalHours += ShiftHelper.CalculateShiftHours(shift);
         }

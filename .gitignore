@@ -1,0 +1,5 @@
+server/
+server_java/.idea/
+server_java/AutoRota.iml
+server_java/target/
+server_java/test.log

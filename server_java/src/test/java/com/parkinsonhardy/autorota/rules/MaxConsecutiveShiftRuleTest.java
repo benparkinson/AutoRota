@@ -143,4 +143,25 @@ public class MaxConsecutiveShiftRuleTest extends RotaEngineTestBase {
 
         rotaEngine.assignShifts(today.plusDays(2), today.plusDays(3));
     }
+
+    @Test(expected = RotaException.class)
+    public void testMaxConsecutiveNightShiftsAtWeekend() throws RotaException {
+        ShiftDefinition nightShift = new ShiftDefinition("Night", LocalTime.parse("21:00"), LocalTime.parse("09:00"));
+        ShiftDefinition testShift = new ShiftDefinition("Test", LocalTime.parse("21:00"), LocalTime.parse("09:00"));
+        rotaEngine.addShiftDefinition(nightShift);
+        addSingleEmployee();
+        addShiftRequirementForEveryDay(rotaEngine, "Night", 1);
+        rotaEngine.addRule(new MaxConsecutiveShiftRule("Night", 4));
+
+        DateTime nextMonday = getNextMonday();
+        DateTime friday = nextMonday.plusDays(5);
+
+        addShiftToSingleEmployee(testShift, friday.minusDays(3));
+        addShiftToSingleEmployee(nightShift, friday);
+        addShiftToSingleEmployee(nightShift, friday.plusDays(1));
+        addShiftToSingleEmployee(nightShift, friday.plusDays(2));
+        addShiftToSingleEmployee(nightShift, friday.plusDays(3));
+
+        rotaEngine.assignShifts(friday.plusDays(4), friday.plusDays(5));
+    }
 }

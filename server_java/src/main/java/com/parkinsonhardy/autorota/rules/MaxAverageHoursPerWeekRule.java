@@ -4,7 +4,6 @@ import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.Shift;
 import com.parkinsonhardy.autorota.engine.ShiftDefinition;
 import com.parkinsonhardy.autorota.engine.ShiftRequirement;
-import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -26,7 +25,7 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
     public boolean passesPreCheck(DateTime startDate, DateTime endDate, Map<String, ShiftDefinition> shiftDefinitions,
                                   List<ShiftRequirement> shiftRequirements, List<Employee> employees) {
         // calculate required hours per week and whether or not it'll be possible to assign shifts and not break rule
-        int totalHours = 0;
+        float totalHours = 0;
         int week = startDate.getWeekOfWeekyear();
         int weekCount = 1;
         for (DateTime dt = startDate.withTimeAtStartOfDay();
@@ -42,7 +41,7 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 }
                 ShiftDefinition shiftDefinition = shiftDefinitions.get(shiftRequirement.getShiftType());
                 LocalTime endTime = shiftDefinition.getEndTime();
-                int hoursPerShift = ShiftHelper.CalculateShiftHours(shiftDefinition.getStartTime(), endTime);
+                float hoursPerShift = ShiftHelper.CalculateShiftHours(shiftDefinition.getStartTime(), endTime);
                 totalHours += hoursPerShift * shiftRequirement.getMinEmployees();
             }
         }
@@ -56,7 +55,7 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 continue;
             }
             Collections.sort(employee.getShifts());
-            int totalHours = 0;
+            float totalHours = 0;
             Integer week = null;
             int weekCount = 0;
             for (Shift shift : employee.getShifts()) {

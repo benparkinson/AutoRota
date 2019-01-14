@@ -3,13 +3,12 @@ package com.parkinsonhardy.autorota.engine;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.rules.HolisticRule;
 import com.parkinsonhardy.autorota.rules.Rule;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 import java.time.DayOfWeek;
 import java.util.*;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ExperimentalRotaEngine extends RotaEngine {
 
@@ -74,6 +73,7 @@ public class ExperimentalRotaEngine extends RotaEngine {
             boolean isLastShiftAssignment = i == allShifts.size() - 1;
 
             Shift shift = allShifts.get(i);
+
             List<Employee> availableEmployees = getAvailableEmployees(shift);
 
             if (noEmployeesAvailableForShift(shift, employeesUnavailableForShifts.get(shift), availableEmployees)) {
@@ -124,7 +124,7 @@ public class ExperimentalRotaEngine extends RotaEngine {
                 lastAssignedEmployee.removeShift(lastAssignedShift);
                 Shift shiftMinusOne = allShifts.get(i - 1);
                 if (!shiftMinusOne.equals(lastAssignedShift)) {
-                    throw new RotaException("what");
+                    throw new RotaException("Unexpected previous shift!");
                 }
                 employeesUnavailableForShifts.get(lastAssignedShift).add(lastAssignedEmployee);
                 // go back a step
@@ -137,15 +137,25 @@ public class ExperimentalRotaEngine extends RotaEngine {
     private List<Shift> sortShifts(List<Shift> allShifts) {
         List<Shift> copy = new ArrayList<>();
         for (Shift shift : allShifts) {
-            if (shiftIsOnWeekend(shift)) {
+            if (shiftIsOnFridaySaturdaySunday(shift)) {
                 copy.add(shift);
             }
         }
 
-        System.out.println("Assigning "+copy.size()+" weekend shifts first...");
+        System.out.printf("Assigning %d weekend shifts first...%n", copy.size());
 
         for (Shift shift : allShifts) {
-            if (!shiftIsOnWeekend(shift)) {
+            if (!shiftIsOnFridaySaturdaySunday(shift) &&
+                    shiftDefinitionsByType.get(shift.getShiftType()).isAllocateInBlocks()) {
+                copy.add(shift);
+            }
+        }
+
+        System.out.printf("Assigning %d shifts after night filtering...%n", copy.size());
+
+        for (Shift shift : allShifts) {
+            if (!shiftIsOnFridaySaturdaySunday(shift) &&
+                    !shiftDefinitionsByType.get(shift.getShiftType()).isAllocateInBlocks()) {
                 copy.add(shift);
             }
         }
@@ -161,8 +171,7 @@ public class ExperimentalRotaEngine extends RotaEngine {
         return true;
     }
 
-
-    private boolean scheduleStillValid(boolean isLastShiftAssignment) throws RotaException {
+    private boolean scheduleStillValid(boolean isLastShiftAssignment) {
         for (Rule rule : rules) {
             for (Employee employee : employees) {
                 Collections.sort(employee.getShifts());
