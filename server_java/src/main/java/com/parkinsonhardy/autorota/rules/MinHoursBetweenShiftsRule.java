@@ -35,7 +35,7 @@ public class MinHoursBetweenShiftsRule implements Rule {
             DateTime endTime = lastShift.getEndTime();
             DateTime startTime = shift.getStartTime();
 
-            if (ShiftHelper.CalculateShiftHours(endTime, startTime) < minHours)
+            if (ShiftHelper.calculateShiftHours(endTime, startTime) < minHours)
                 return false;
 
             lastShift = shift;

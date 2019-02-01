@@ -12,7 +12,7 @@ public class ShiftHelperTest {
     public void testShiftDifference() {
         Shift shift = new Shift("Test", DateTime.parse("2018-01-01T01:00:00Z"),
                 DateTime.parse("2018-01-01T05:00:00Z"));
-        float i = ShiftHelper.CalculateShiftHours(shift);
+        float i = ShiftHelper.calculateShiftHours(shift);
         Assert.assertEquals(4, i, 0);
     }
 
@@ -20,7 +20,7 @@ public class ShiftHelperTest {
     public void testShiftDifferenceHalfHour() {
         Shift shift = new Shift("Test", DateTime.parse("2018-01-01T01:00:00Z"),
                 DateTime.parse("2018-01-01T05:30:00Z"));
-        float i = ShiftHelper.CalculateShiftHours(shift);
+        float i = ShiftHelper.calculateShiftHours(shift);
         Assert.assertEquals(4.5, i, 0);
     }
 
@@ -28,48 +28,48 @@ public class ShiftHelperTest {
     public void testShiftDifferenceOvernight() {
         Shift shift = new Shift("Test", DateTime.parse("2018-01-01T23:00:00Z"),
                 DateTime.parse("2018-01-02T05:00:00Z"));
-        float i = ShiftHelper.CalculateShiftHours(shift);
+        float i = ShiftHelper.calculateShiftHours(shift);
         Assert.assertEquals(6, i, 0);
     }
 
     @Test
     public void testLocalTimeDifference() {
-        float i = ShiftHelper.CalculateShiftHours(LocalTime.parse("01:00:00"),
+        float i = ShiftHelper.calculateShiftHours(LocalTime.parse("01:00:00"),
                 LocalTime.parse("05:00:00"));
         Assert.assertEquals(4, i, 0);
     }
 
     @Test
     public void testLocalTimeDifferenceHalfHour() {
-        float i = ShiftHelper.CalculateShiftHours(LocalTime.parse("01:00:00"),
+        float i = ShiftHelper.calculateShiftHours(LocalTime.parse("01:00:00"),
                 LocalTime.parse("05:30:00"));
         Assert.assertEquals(4.5, i, 0);
     }
 
     @Test
     public void testLocalTimeDifferenceOvernight() {
-        float i = ShiftHelper.CalculateShiftHours(LocalTime.parse("23:00:00"),
+        float i = ShiftHelper.calculateShiftHours(LocalTime.parse("23:00:00"),
                 LocalTime.parse("05:00:00"));
         Assert.assertEquals(6, i, 0);
     }
 
     @Test
     public void testDateTimeDifference() {
-        float i = ShiftHelper.CalculateShiftHours(DateTime.parse("2018-01-01T01:00:00Z"),
+        float i = ShiftHelper.calculateShiftHours(DateTime.parse("2018-01-01T01:00:00Z"),
                 DateTime.parse("2018-01-01T05:00:00Z"));
         Assert.assertEquals(4, i, 0);
     }
 
     @Test
     public void testDateTimeDifferenceOvernight() {
-        float i = ShiftHelper.CalculateShiftHours(DateTime.parse("2018-01-01T23:00:00Z"),
+        float i = ShiftHelper.calculateShiftHours(DateTime.parse("2018-01-01T23:00:00Z"),
                 DateTime.parse("2018-01-02T05:00:00Z"));
         Assert.assertEquals(6, i, 0);
     }
 
     @Test
     public void testDateTimeDifferenceHalfHour() {
-        float i = ShiftHelper.CalculateShiftHours(DateTime.parse("2018-01-01T23:00:00Z"),
+        float i = ShiftHelper.calculateShiftHours(DateTime.parse("2018-01-01T23:00:00Z"),
                 DateTime.parse("2018-01-02T05:30:00Z"));
         Assert.assertEquals(6.5, i, 0);
     }

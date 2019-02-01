@@ -12,8 +12,6 @@ public class NoMoreThanOneConsecutiveWeekendsRule implements Rule {
 
     private static final int ONE = 1;
 
-    public NoMoreThanOneConsecutiveWeekendsRule() { }
-
     @Override
     public boolean shiftsPassesRule(List<Shift> shifts) {
         if (shifts.size() < 2) {
@@ -30,10 +28,8 @@ public class NoMoreThanOneConsecutiveWeekendsRule implements Rule {
             if (weeksOfYearWithShifts.add(shift.getStartTime().getWeekOfWeekyear()))
                 consecutiveWeekendShiftCount++;
 
-            if (lastWeekendShiftChecked != null) {
-                if (moreThanOneWeekBetweenShifts(lastWeekendShiftChecked, shift))
-                    consecutiveWeekendShiftCount = 0;
-            }
+            if (lastWeekendShiftChecked != null && moreThanOneWeekBetweenShifts(lastWeekendShiftChecked, shift))
+                consecutiveWeekendShiftCount = 0;
 
             if (consecutiveWeekendShiftCount > ONE)
                 return false;
@@ -52,14 +48,10 @@ public class NoMoreThanOneConsecutiveWeekendsRule implements Rule {
         int startOfShiftDay = shift.getStartTime().getDayOfWeek();
         int endOfShiftDay = shift.getEndTime().getDayOfWeek();
 
-        if (startOfShiftDay == DayOfWeek.SATURDAY.getValue() ||
+        return startOfShiftDay == DayOfWeek.SATURDAY.getValue() ||
                 startOfShiftDay == DayOfWeek.SUNDAY.getValue() ||
                 endOfShiftDay == DayOfWeek.SATURDAY.getValue() ||
-                endOfShiftDay == DayOfWeek.SUNDAY.getValue()) {
-            return true;
-        }
-
-        return false;
+                endOfShiftDay == DayOfWeek.SUNDAY.getValue();
     }
 
     @Override

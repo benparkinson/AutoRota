@@ -8,25 +8,28 @@ import org.joda.time.Period;
 
 public class ShiftHelper {
 
-    public static float CalculateShiftHours(Shift shift) {
+    // Only a static helper class, no need to construct
+    private ShiftHelper() {}
+
+    public static float calculateShiftHours(Shift shift) {
         Period difference = new Period(shift.getStartTime(), shift.getEndTime());
         int v = difference.getMinutes() + (difference.getHours() * 60);
         return v / 60f;
     }
 
-    public static float CalculateShiftHours(LocalTime startTime, LocalTime endTime) {
+    public static float calculateShiftHours(LocalTime startTime, LocalTime endTime) {
         Period difference;
         if (startTime.isBefore(endTime)) {
             difference = new Period(startTime, endTime);
         } else {
-            return CalculateShiftHours(DateTime.now().withTime(startTime),
+            return calculateShiftHours(DateTime.now().withTime(startTime),
                     DateTime.now().plusDays(1).withTime(endTime));
         }
 
         return (difference.getMinutes() + (difference.getHours() * 60)) / 60f;
     }
 
-    public static float CalculateShiftHours(DateTime startTime, DateTime endTime) {
+    public static float calculateShiftHours(DateTime startTime, DateTime endTime) {
         Duration difference;
         if (startTime.equals(endTime)) {
             return 0;

@@ -34,7 +34,7 @@ public class MaxHoursPerWeekRule implements Rule {
                 if (toAdd.getStartTime().isBefore(sevenDaysAgo)) {
                     break;
                 }
-                totalHours += ShiftHelper.CalculateShiftHours(shift);
+                totalHours += ShiftHelper.calculateShiftHours(shift);
             }
 
             if (totalHours > maxHours)

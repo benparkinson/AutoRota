@@ -41,7 +41,7 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                 }
                 ShiftDefinition shiftDefinition = shiftDefinitions.get(shiftRequirement.getShiftType());
                 LocalTime endTime = shiftDefinition.getEndTime();
-                float hoursPerShift = ShiftHelper.CalculateShiftHours(shiftDefinition.getStartTime(), endTime);
+                float hoursPerShift = ShiftHelper.calculateShiftHours(shiftDefinition.getStartTime(), endTime);
                 totalHours += hoursPerShift * shiftRequirement.getMinEmployees();
             }
         }
@@ -51,7 +51,7 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
     @Override
     public boolean passesFinalCheck(List<Employee> employees) {
         for (Employee employee : employees) {
-            if (employee.getShifts().size() == 0) {
+            if (employee.getShifts().isEmpty()) {
                 continue;
             }
             Collections.sort(employee.getShifts());
@@ -67,9 +67,10 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
                     week = shift.getEndTime().getWeekOfWeekyear();
                     weekCount++;
                 }
-                totalHours += ShiftHelper.CalculateShiftHours(shift);
+                totalHours += ShiftHelper.calculateShiftHours(shift);
             }
-            if ((double)totalHours / (double)weekCount > maxAverageHours) {
+
+            if (weekCount == 0 || (double)totalHours / (double)weekCount > maxAverageHours) {
                 return false;
             }
         }

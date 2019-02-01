@@ -11,7 +11,6 @@ import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -276,7 +275,7 @@ public class RotaEngineTest extends RotaEngineTestBase {
     private int countHours(Employee employee) {
         int totalHours = 0;
         for (Shift shift : employee.getShifts()) {
-            totalHours += ShiftHelper.CalculateShiftHours(shift.getStartTime(), shift.getEndTime());
+            totalHours += ShiftHelper.calculateShiftHours(shift.getStartTime(), shift.getEndTime());
         }
         return totalHours;
     }

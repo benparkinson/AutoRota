@@ -29,8 +29,8 @@ public class MinHoursAfterConsecutiveShiftsRule implements Rule {
 
     @Override
     public String getName() {
-        return "Min Hours After Consecutive Shifts Rule: " + shiftType + ", hours rest required: " + hoursRestAfterConsecutiveShifts + "," +
-                "consecutive shifts to check: " + consecutiveShiftCountMatcher.toString();
+        return String.format("Min Hours After Consecutive Shifts Rule: %s, hours rest required: %d,consecutive shifts to check: %s",
+                shiftType, hoursRestAfterConsecutiveShifts, consecutiveShiftCountMatcher.toString());
     }
 
     @Override
@@ -40,45 +40,44 @@ public class MinHoursAfterConsecutiveShiftsRule implements Rule {
         }
 
         int consecutiveShiftCount = 0;
-        boolean checkNextShift = false;
         Shift lastShiftChecked = null;
         for (Shift shift : shifts) {
-            if (checkNextShift) {
-                if (!(shift.getShiftType().equals(shiftType) && consecutiveShiftCountMatcher.matches(consecutiveShiftCount + 1))) {
-                    if (ShiftHelper.CalculateShiftHours(lastShiftChecked.getEndTime(), shift.getStartTime()) <
-                            hoursRestAfterConsecutiveShifts)
-                        return false;
-
-                    checkNextShift = false;
-                }
+            boolean shiftToCount = shift.getShiftType().equals(shiftType);
+            // if next shift type is different, check hours after shift
+            if (consecutiveShiftsBreakRule(consecutiveShiftCount, lastShiftChecked, shift, shiftToCount)) {
+                return false;
             }
 
-            if (shift.getShiftType().equals(shiftType))
+            if (shiftToCount)
                 consecutiveShiftCount++;
             else
                 consecutiveShiftCount = 0;
 
-            if (lastShiftChecked != null) {
-                if (moreThanOneDayBetweenShifts(lastShiftChecked, shift)) {
-                    if (consecutiveShiftCountMatcher.matches(consecutiveShiftCount)) {
-                        if (!consecutiveShiftCountMatcher.matches(consecutiveShiftCount + 1)) {
-                            if (ShiftHelper.CalculateShiftHours(lastShiftChecked.getEndTime(), shift.getStartTime()) <
-                                    hoursRestAfterConsecutiveShifts)
-                                return false;
-                        }
-                    }
-
-                    consecutiveShiftCount = 0;
+            if (lastShiftChecked != null && moreThanOneDayBetweenShifts(lastShiftChecked, shift)
+                    && consecutiveShiftCountMatcher.matches(consecutiveShiftCount)) {
+                // if there's a day gap between shifts, check the rule for failure
+                if (!consecutiveShiftCountMatcher.matches(consecutiveShiftCount + 1)
+                        && notEnoughHoursRestBetweenShifts(lastShiftChecked, shift)) {
+                    return false;
                 }
-            }
 
-            if (consecutiveShiftCountMatcher.matches(consecutiveShiftCount)) {
-                checkNextShift = true;
+                consecutiveShiftCount = 0;
             }
 
             lastShiftChecked = shift;
         }
         return true;
+    }
+
+    private boolean consecutiveShiftsBreakRule(int consecutiveShiftCount, Shift lastShiftChecked, Shift shift, boolean shiftToCount) {
+        return lastShiftChecked != null && consecutiveShiftCountMatcher.matches(consecutiveShiftCount) &&
+                !(shiftToCount && consecutiveShiftCountMatcher.matches(consecutiveShiftCount + 1))
+                && notEnoughHoursRestBetweenShifts(lastShiftChecked, shift);
+    }
+
+    private boolean notEnoughHoursRestBetweenShifts(Shift lastShiftChecked, Shift shift) {
+        return ShiftHelper.calculateShiftHours(lastShiftChecked.getEndTime(), shift.getStartTime()) <
+                hoursRestAfterConsecutiveShifts;
     }
 
     private boolean moreThanOneDayBetweenShifts(Shift lastShiftChecked, Shift shift) {

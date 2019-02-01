@@ -29,16 +29,14 @@ public class MaxConsecutiveShiftRule implements Rule {
         int consecutiveShiftCount = 0;
         Shift lastShiftChecked = null;
         for (Shift shift : shifts) {
-            if (lastShiftChecked != null) {
-                if (moreThanOneDayBetweenShifts(lastShiftChecked, shift))
-                    consecutiveShiftCount = 0;
-            }
+            if (lastShiftChecked != null && moreThanOneDayBetweenShifts(lastShiftChecked, shift))
+                consecutiveShiftCount = 0;
+
 
             if (shift.getShiftType().equals(shiftType))
                 consecutiveShiftCount++;
             else
                 consecutiveShiftCount = 0;
-
 
 
             if (consecutiveShiftCount > maxConsecutiveShifts)
