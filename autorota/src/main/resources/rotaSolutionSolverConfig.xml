@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+    <scanAnnotatedClasses>
+        <packageInclude>com.parkinsonhardy.autorota</packageInclude>
+    </scanAnnotatedClasses>
+
+    <scoreDirectorFactory>
+        <easyScoreCalculatorClass>com.parkinsonhardy.autorota.engine.RotaEasyScoreCalculator</easyScoreCalculatorClass>
+    </scoreDirectorFactory>
+
+    <termination>
+        <secondsSpentLimit>60</secondsSpentLimit>
+    </termination>
+
+    <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+
+        <forager>
+            <pickEarlyType>FIRST_FEASIBLE_SCORE</pickEarlyType>
+        </forager>
+    </constructionHeuristic>
+
+    <localSearch>
+        <acceptor>
+            <entityTabuSize>7</entityTabuSize>
+        </acceptor>
+
+        <forager>
+            <acceptedCountLimit>800</acceptedCountLimit>
+        </forager>
+    </localSearch>
+
+</solver>

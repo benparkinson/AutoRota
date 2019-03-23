@@ -1,0 +1,4 @@
+export const CREATE_ROTA = 'CREATE_ROTA';
+export const VIEW_ROTA = 'VIEW_ROTA';
+export const FETCH_HARD_RULES = 'FETCH_HARD_RULES';
+export const FETCH_SOFT_RULES = 'FETCH_SOFT_RULES';
