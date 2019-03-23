@@ -16,17 +16,18 @@
         <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
 
         <forager>
-            <pickEarlyType>FIRST_FEASIBLE_SCORE</pickEarlyType>
+            <pickEarlyType>FIRST_FEASIBLE_SCORE_OR_NON_DETERIORATING_HARD</pickEarlyType>
         </forager>
+
     </constructionHeuristic>
 
     <localSearch>
         <acceptor>
-            <entityTabuSize>7</entityTabuSize>
+            <lateAcceptanceSize>400</lateAcceptanceSize>
+            <entityTabuSize>5</entityTabuSize>
         </acceptor>
-
         <forager>
-            <acceptedCountLimit>800</acceptedCountLimit>
+            <acceptedCountLimit>1</acceptedCountLimit>
         </forager>
     </localSearch>
 
