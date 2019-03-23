@@ -71,6 +71,9 @@ public class PlannerRotaEngine extends RotaEngine {
     }
 
     protected SolverFactory<RotaSolution> createSolverFactory() {
-        return SolverFactory.createFromXmlResource("rotaSolutionSolverConfig.xml");
+        SolverFactory<RotaSolution> solverFactory = SolverFactory.createFromXmlResource("rotaSolutionSolverConfig.xml");
+        TerminationConfig terminationConfig = solverFactory.getSolverConfig().getTerminationConfig();
+        terminationConfig.setSecondsSpentLimit((long) timeoutInSeconds);
+        return solverFactory;
     }
 }

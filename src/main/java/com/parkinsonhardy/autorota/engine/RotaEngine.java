@@ -19,6 +19,7 @@ public abstract class RotaEngine {
     protected List<Rule> rules = new ArrayList<>();
     protected List<SoftRule> softRules = new ArrayList<>();
     protected List<HolisticRule> holisticRules = new ArrayList<>();
+    protected int timeoutInSeconds;
 
     private int shiftId = 0;
 
@@ -103,5 +104,9 @@ public abstract class RotaEngine {
 
     public Set<String> getShiftTypes() {
         return shiftDefinitionsByType.keySet();
+    }
+
+    public void setTimeoutInSeconds(int timeoutInSeconds) {
+        this.timeoutInSeconds = timeoutInSeconds;
     }
 }

@@ -35,4 +35,13 @@ public class RuleParamArgs {
     public String getInput() {
         return input;
     }
+
+    @Override
+    public String toString() {
+        return "RuleParamArgs{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", input='" + input + '\'' +
+                '}';
+    }
 }

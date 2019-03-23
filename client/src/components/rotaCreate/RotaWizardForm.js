@@ -3,7 +3,7 @@ import converter from 'number-to-words';
 import { reduxForm } from 'redux-form';
 
 import validateRotaForm from './formPages/validateRotaForm';
-import DateFormPage from './formPages/DateFormPage';
+import GeneralConfigFormPage from './formPages/GeneralConfigFormPage';
 import DoctorFormPage from './formPages/DoctorFormPage';
 import HardRuleFormPage from './formPages/HardRuleFormPage';
 import ShiftDefinitionFormPage from './formPages/ShiftDefinitionFormPage';
@@ -295,7 +295,8 @@ const defaultFormValues = {
         }
     ],
     "startDate": "2019-01-07",
-    "endDate": "2019-04-01"
+    "endDate": "2019-04-01",
+    "timeout": 300
 }
 
 const pageOrder = [
@@ -316,8 +317,8 @@ const pageOrder = [
         name: 'Define Doctors'
     },
     {
-        comp: DateFormPage,
-        name: 'Pick Dates'
+        comp: GeneralConfigFormPage,
+        name: 'Final Configuration'
     }
 ];
 

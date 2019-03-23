@@ -45,4 +45,14 @@ public class ShiftDefinitionArgs {
     public void setDayRequirements(DayRequirementArgs dayRequirements) {
         this.dayRequirements = dayRequirements;
     }
+
+    @Override
+    public String toString() {
+        return "ShiftDefinitionArgs{" +
+                "shiftName='" + shiftName + '\'' +
+                ", shiftStart='" + shiftStart + '\'' +
+                ", shiftEnd='" + shiftEnd + '\'' +
+                ", dayRequirements=" + dayRequirements +
+                '}';
+    }
 }

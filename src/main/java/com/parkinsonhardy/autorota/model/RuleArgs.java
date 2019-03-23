@@ -37,4 +37,13 @@ public class RuleArgs {
     public void setParams(List<RuleParamArgs> params) {
         this.params = params;
     }
+
+    @Override
+    public String toString() {
+        return "RuleArgs{" +
+                "name='" + name + '\'' +
+                ", unique=" + unique +
+                ", params=" + params +
+                '}';
+    }
 }

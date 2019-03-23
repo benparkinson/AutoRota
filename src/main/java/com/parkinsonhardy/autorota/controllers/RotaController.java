@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +36,9 @@ public class RotaController {
     private Logger logger = LoggerFactory.getLogger(RotaController.class);
 
     @PostMapping(path = "/api/rotas/create", consumes = "application/json")
-    public String createRota(@RequestBody RotaCreationArgs args) throws RotaException, MessagingException {
+    public String createRota(@RequestBody RotaCreationArgs args) throws RotaException {
+        logger.info(String.format("Received request for Rota creation: %s", args.toString()));
+
         RotaEngine rotaEngine = new PlannerRotaEngine();
         ShiftCreator shiftCreator = new ShiftCreator();
         List<ShiftDefinitionArgs> shiftDefinitions = args.getShiftDefinitions();
@@ -64,6 +65,8 @@ public class RotaController {
         DateTime startDate = DateTime.parse(args.getStartDate());
         DateTime endDate = DateTime.parse(args.getEndDate());
 
+        rotaEngine.setTimeoutInSeconds(args.getTimeout());
+
         rotaThread.submit(() -> {
             try {
                 rotaEngine.assignShifts(startDate, endDate);
@@ -72,6 +75,8 @@ public class RotaController {
                 latestRota.set("Error, could not create rota");
             }
         });
+
+        logger.info("Request submitted!");
 
         return "Rota creation request submitted...please check the rota view page";
     }

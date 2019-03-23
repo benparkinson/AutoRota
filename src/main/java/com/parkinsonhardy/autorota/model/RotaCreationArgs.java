@@ -9,6 +9,7 @@ public class RotaCreationArgs {
     private List<RuleArgs> hardRules;
     private List<ShiftDefinitionArgs> shiftDefinitions;
     private String startDate, endDate;
+    private int timeout;
 
     public List<DoctorArgs> getDoctors() {
         return doctors;
@@ -56,5 +57,26 @@ public class RotaCreationArgs {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    @Override
+    public String toString() {
+        return "RotaCreationArgs{" +
+                "softRules=" + softRules +
+                ", doctors=" + doctors +
+                ", hardRules=" + hardRules +
+                ", shiftDefinitions=" + shiftDefinitions +
+                ", startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", timeout=" + timeout +
+                '}';
     }
 }

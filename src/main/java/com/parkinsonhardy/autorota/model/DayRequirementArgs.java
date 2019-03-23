@@ -87,4 +87,17 @@ public class DayRequirementArgs {
         List<DayOfWeek> dayOfWeeks = map.computeIfAbsent(count, k -> new ArrayList<>());
         dayOfWeeks.add(dayOfWeek);
     }
+
+    @Override
+    public String toString() {
+        return "DayRequirementArgs{" +
+                "monday=" + monday +
+                ", tuesday=" + tuesday +
+                ", wednesday=" + wednesday +
+                ", thursday=" + thursday +
+                ", friday=" + friday +
+                ", saturday=" + saturday +
+                ", sunday=" + sunday +
+                '}';
+    }
 }
