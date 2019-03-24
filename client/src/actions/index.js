@@ -1,21 +1,37 @@
-import { CREATE_ROTA, VIEW_ROTA, FETCH_HARD_RULES, FETCH_SOFT_RULES } from './types';
+import {
+    CREATE_ROTA,
+    FETCH_ROTA,
+    FETCH_HARD_RULES,
+    FETCH_SOFT_RULES,
+    FETCH_ROTAS
+} from './types';
 import rotas from '../apis/rotas';
+import history from '../history';
 
 export const createRota = (formValues) => async dispatch => {
     const response = await rotas.post('/rotas/create', formValues);
 
-    const updateTime = new Date();
     dispatch({
         type: CREATE_ROTA,
-        payload: `${updateTime}: ${response.data}`
+        payload: response.data
     });
+    history.push('/rotas');
 }
 
-export const viewRota = () => async dispatch => {
+export const fetchRotas = () => async dispatch => {
     const response = await rotas.get('/rotas/');
 
     dispatch({
-        type: VIEW_ROTA,
+        type: FETCH_ROTAS,
+        payload: response.data._embedded.rotas
+    });
+}
+
+export const fetchRota = (rotaId) => async dispatch => {
+    const response = await rotas.get(`/rotas/${rotaId}`);
+
+    dispatch({
+        type: FETCH_ROTA,
         payload: response.data
     });
 }

@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "http-proxy-middleware": "^0.19.1",
+    "lodash": "^4.17.11",
     "number-to-words": "^1.2.4",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",

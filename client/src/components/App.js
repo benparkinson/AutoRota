@@ -2,6 +2,7 @@ import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 import RotaCreate from './rotaCreate/RotaCreate';
 import RotaView from './rotaView/RotaView';
+import RotaList from './rotaView/RotaList';
 import Header from './Header';
 import Home from './Home';
 import history from '../history';
@@ -15,7 +16,8 @@ const App = () => {
                     <Switch>
                         <Route path="/" exact component={Home} />
                         <Route path="/rotas/new" exact component={RotaCreate} />
-                        <Route path="/rotas/view" exact component={RotaView} />
+                        <Route path="/rotas/" exact component={RotaList} />
+                        <Route path="/rotas/:id" exact component={RotaView} />
                     </Switch>
                 </div>
             </Router>

@@ -21,9 +21,9 @@ class HardRuleFormPage extends React.Component {
     }
 }
 
-const mapStateToProps = ({ rota }) => {
+const mapStateToProps = ({ rules }) => {
     return {
-        possibleRules: rota.hardRules
+        possibleRules: rules.hardRules
     };
 }
 

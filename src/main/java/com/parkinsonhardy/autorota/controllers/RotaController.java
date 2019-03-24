@@ -9,34 +9,39 @@ import com.parkinsonhardy.autorota.engine.RotaEngine;
 import com.parkinsonhardy.autorota.engine.Shift;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.helpers.ShiftHelper;
-import com.parkinsonhardy.autorota.model.DoctorArgs;
-import com.parkinsonhardy.autorota.model.RotaCreationArgs;
-import com.parkinsonhardy.autorota.model.RuleArgs;
-import com.parkinsonhardy.autorota.model.ShiftDefinitionArgs;
+import com.parkinsonhardy.autorota.model.*;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
+@Component
 public class RotaController {
 
-    private ExecutorService rotaThread = Executors.newSingleThreadExecutor();
-
-    private AtomicReference<String> latestRota = new AtomicReference<>();
+    private final RotaRepository rotaRepository;
 
     private Logger logger = LoggerFactory.getLogger(RotaController.class);
 
+    @Autowired
+    public RotaController(RotaRepository rotaRepository) {
+        this.rotaRepository = rotaRepository;
+    }
+
     @PostMapping(path = "/api/rotas/create", consumes = "application/json")
-    public String createRota(@RequestBody RotaCreationArgs args) throws RotaException {
+    public Rota createRota(@RequestBody RotaCreationArgs args) throws RotaException {
         logger.info(String.format("Received request for Rota creation: %s", args.toString()));
 
         RotaEngine rotaEngine = new PlannerRotaEngine();
@@ -67,23 +72,32 @@ public class RotaController {
 
         rotaEngine.setTimeoutInSeconds(args.getTimeout());
 
-        rotaThread.submit(() -> {
-            try {
-                rotaEngine.assignShifts(startDate, endDate);
-                latestRota.set(printRota(rotaEngine, startDate, endDate));
-            } catch (RotaException e) {
-                latestRota.set("Error, could not create rota");
-            }
-        });
+        // should this db call be on the pool thread to free up web response workers? Can returned deferred result
+        // of the rota in progress if so
+        Rota submitted = rotaRepository.save(
+                new Rota(LocalDateTime.now(ZoneId.of("Z")), args.getTimeout(), "Submitted", null));
+
+        ForkJoinPool.commonPool().submit(() -> {
+                    try {
+                        rotaEngine.assignShifts(startDate, endDate);
+                        String rotaPrinted = printRota(rotaEngine, startDate, endDate);
+                        // should this find by Id again and get from DB? or ok to hang on to reference...?
+                        submitted.setStatus("Complete");
+                        submitted.setStringRepresentation(rotaPrinted);
+                        submitted.setEndDateTime(LocalDateTime.now(ZoneId.of("Z")));
+                        rotaRepository.save(submitted);
+                    } catch (RotaException e) {
+                        String error = "Error, could not create rota";
+                        logger.error(error);
+                        submitted.setStatus("Error");
+                        rotaRepository.save(submitted);
+                    }
+                }
+        );
 
         logger.info("Request submitted!");
 
-        return "Rota creation request submitted...please check the rota view page";
-    }
-
-    @GetMapping("/api/rotas/")
-    public String getRotas() {
-        return latestRota.get();
+        return submitted;
     }
 
     private String printRota(RotaEngine rotaEngine, DateTime startDate, DateTime endDate) {

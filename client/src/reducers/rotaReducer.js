@@ -1,15 +1,19 @@
-import { CREATE_ROTA, FETCH_HARD_RULES, FETCH_SOFT_RULES, VIEW_ROTA } from '../actions/types';
+import _ from 'lodash';
+
+import {
+    CREATE_ROTA,
+    FETCH_ROTA,
+    FETCH_ROTAS
+} from '../actions/types';
 
 export default (state = {}, action) => {
     switch (action.type) {
         case CREATE_ROTA:
-            return { ...state, rotaSubmitMessage: action.payload };
-        case VIEW_ROTA:
-            return { ...state, latestRota: action.payload };
-        case FETCH_HARD_RULES:
-            return { ...state, hardRules: action.payload };
-        case FETCH_SOFT_RULES:
-            return { ...state, softRules: action.payload };
+            return { ...state, [action.payload.id]: action.payload };
+        case FETCH_ROTA:
+            return { ...state, [action.payload.id]: action.payload };
+        case FETCH_ROTAS:
+            return { ...state, ..._.mapKeys(action.payload, 'id') };
         default:
             return state;
     }

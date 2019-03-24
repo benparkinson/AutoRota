@@ -21,9 +21,9 @@ class SoftRuleFormPage extends React.Component {
     }
 }
 
-const mapStateToProps = ({ rota }) => {
+const mapStateToProps = ({ rules }) => {
     return {
-        possibleRules: rota.softRules
+        possibleRules: rules.softRules
     };
 }
 

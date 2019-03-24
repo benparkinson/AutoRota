@@ -7,8 +7,8 @@ const Home = () => {
             <Link to="/rotas/new" className="ui button primary">
                 Create New Rota
             </Link>
-            <Link to="/rotas/view" className="ui button primary">
-                View Latest Rota
+            <Link to="/rotas/" className="ui button primary">
+                View Rotas
             </Link>
         </div>
     );

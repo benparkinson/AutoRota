@@ -22,9 +22,9 @@ class RotaCreate extends React.Component {
     }
 }
 
-const mapStateToProps = ({ rota }) => {
+const mapStateToProps = ({ rotas }) => {
     return {
-        rotaSubmitMessage: rota.rotaSubmitMessage
+        rotaSubmitMessage: rotas.rotaSubmitMessage
     };
 }
 
