@@ -99,7 +99,13 @@ class RotaList extends React.Component {
         if (rota.endDateTime) {
             desc += `, completed at ${end}`;
         }
-        return desc;
+        return (
+            <div>
+                ID: {rota.id}
+                <br />
+                {desc}
+            </div>
+        );
     }
 
     renderRotaList = () => {
@@ -117,8 +123,8 @@ class RotaList extends React.Component {
                     </div>
                     <i className={`large middle aligned icon ${iconClassName}`} />
                     <div className="content">
-                        <Link to={`/rotas/${rota.id}`}>
-                            {rota.id}
+                        <Link to={`/rotas/${rota.id}`} >
+                            {rota.name}
                         </Link>
                         {this.renderProgressBar(rota)}
                         <div className="description">

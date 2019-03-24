@@ -16,16 +16,9 @@ class RotaCreate extends React.Component {
                 <div className="ui container">
                     <RotaWizardForm onSubmit={this.onSubmit} />
                 </div>
-                {this.props.rotaSubmitMessage}
             </div>
         );
     }
 }
 
-const mapStateToProps = ({ rotas }) => {
-    return {
-        rotaSubmitMessage: rotas.rotaSubmitMessage
-    };
-}
-
-export default connect(mapStateToProps, { createRota })(RotaCreate);
+export default connect(null, { createRota })(RotaCreate);

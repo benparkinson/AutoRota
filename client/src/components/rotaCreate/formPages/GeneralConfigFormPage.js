@@ -50,7 +50,13 @@ const GeneralConfigFormPage = (props) => {
                 </div>
                 <div className="ui segment">
                     <strong className="ui header">Extra Config</strong>
-                    <div className="ui field">
+                    <div className="two fields">
+                        <Field
+                            name="name"
+                            component={renderInput}
+                            label="Rota Name (just to help you remember)"
+                            type="text"
+                        />
                         <Field
                             name="timeout"
                             component={renderInput}

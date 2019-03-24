@@ -53,6 +53,7 @@ class ShiftDefinitionFormPage extends React.Component {
             <ul style={{ "paddingRight": "40px" }}>
 
                 <div className="ui center aligned container">
+                    <div className="ui field"></div>
                     <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
                         Add Shift Definition
                     </button>

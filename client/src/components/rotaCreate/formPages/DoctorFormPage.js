@@ -33,6 +33,7 @@ const renderDoctors = ({ fields }) => {
         <ul style={{ "paddingRight": "40px" }}>
 
             <div className="ui center aligned container">
+                <div className="ui field"></div>
                 <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
                     Add Doctor
                 </button>

@@ -8,6 +8,7 @@ import java.util.Objects;
 public class Rota {
 
     private @Id @GeneratedValue Long id;
+    private String name;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private int timeoutSeconds;
@@ -18,7 +19,8 @@ public class Rota {
 
     private Rota() {}
 
-    public Rota(LocalDateTime startDateTime, int timeoutSeconds, String status, String stringRepresentation) {
+    public Rota(String name, LocalDateTime startDateTime, int timeoutSeconds, String status, String stringRepresentation) {
+        this.name = name;
         this.startDateTime = startDateTime;
         this.timeoutSeconds = timeoutSeconds;
         this.status = status;
@@ -31,6 +33,14 @@ public class Rota {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDateTime getStartDateTime() {

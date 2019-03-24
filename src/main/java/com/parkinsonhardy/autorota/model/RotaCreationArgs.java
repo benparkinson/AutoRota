@@ -10,6 +10,7 @@ public class RotaCreationArgs {
     private List<ShiftDefinitionArgs> shiftDefinitions;
     private String startDate, endDate;
     private int timeout;
+    private String name;
 
     public List<DoctorArgs> getDoctors() {
         return doctors;
@@ -65,6 +66,14 @@ public class RotaCreationArgs {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

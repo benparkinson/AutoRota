@@ -75,7 +75,7 @@ public class RotaController {
         // should this db call be on the pool thread to free up web response workers? Can returned deferred result
         // of the rota in progress if so
         Rota submitted = rotaRepository.save(
-                new Rota(LocalDateTime.now(ZoneId.of("Z")), args.getTimeout(), "Submitted", null));
+                new Rota(args.getName(), LocalDateTime.now(ZoneId.of("Z")), args.getTimeout(), "Submitted", null));
 
         ForkJoinPool.commonPool().submit(() -> {
                     try {
