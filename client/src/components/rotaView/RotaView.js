@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { STATUS_COMPLETE, STATUS_ERROR, STATUS_IN_PROGRESS } from './constants';
+import { STATUS_ERROR, STATUS_IN_PROGRESS } from './constants';
 
 import { fetchRota } from '../../actions';
 
@@ -60,7 +60,7 @@ class RotaView extends React.Component {
         return (
             <div>
                 {this.renderAllRotasButton()}
-                <h3>Rota {this.props.rota.id}:</h3>
+                <h4 className="ui header">Rota {this.props.rota.id}:</h4>
                 {this.renderContent()}
             </div>
         );
