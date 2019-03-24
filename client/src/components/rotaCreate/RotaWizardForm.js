@@ -332,7 +332,7 @@ class RotaWizardForm extends React.Component {
         return pageOrder.map(({ name }, index) => {
             let buttonType;
             if (this.state.currentPage === index) {
-                buttonType = 'blue';
+                buttonType = 'black';
             } else {
                 buttonType = '';
             }
