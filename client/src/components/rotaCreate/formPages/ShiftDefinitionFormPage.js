@@ -50,7 +50,7 @@ class ShiftDefinitionFormPage extends React.Component {
         // should ideally be relative and probably set the padding on each side to be the same, maybe pass this in so
         // all form pages are the same?
         return (
-            <ul style={{ "paddingRight": "40px" }}>
+            <div>
 
                 <div className="ui field"></div>
 
@@ -85,7 +85,7 @@ class ShiftDefinitionFormPage extends React.Component {
                         Add Shift Definition
                     </button>
                 </div>
-            </ul>
+            </div>
         );
     }
 

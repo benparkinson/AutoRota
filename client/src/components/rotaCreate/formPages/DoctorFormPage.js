@@ -26,11 +26,8 @@ const renderInput = ({ input, label, meta }) => {
 }
 
 const renderDoctors = ({ fields }) => {
-    // todo don't hardcode the padding, this is only hinging on the browser defaulting a ul style to pad 40px
-    // should ideally be relative and probably set the padding on each side to be the same, maybe pass this in so
-    // all form pages are the same?
     return (
-        <ul style={{ "paddingRight": "40px" }}>
+        <div >
 
             <div className="ui field"></div>
 
@@ -56,7 +53,7 @@ const renderDoctors = ({ fields }) => {
                     Add Doctor
                 </button>
             </div>
-        </ul>
+        </div>
     );
 }
 

@@ -30,7 +30,7 @@ const GeneralConfigFormPage = (props) => {
         <form onSubmit={props.handleSubmit}
             className="ui form error">
             <div className="ui field"></div>
-            <div style={{ "paddingRight": "40px", "paddingLeft": "40px" }} className="ui field">
+            <div className="ui field">
                 <div className="ui segment">
                     <strong className="ui header">Dates</strong>
                     <div className="two fields">

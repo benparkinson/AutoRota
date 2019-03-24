@@ -138,10 +138,12 @@ class RotaList extends React.Component {
 
     render() {
         return (
-            <div>
-                <h2 className="ui header">Rotas</h2>
-                <div className="ui large middle aligned celled list">
-                    {this.renderRotaList()}
+            <div >
+                <h3>All Rotas</h3>
+                <div className="ui container">
+                    <div className="ui large middle aligned celled list">
+                        {this.renderRotaList()}
+                    </div>
                 </div>
             </div>
         );
