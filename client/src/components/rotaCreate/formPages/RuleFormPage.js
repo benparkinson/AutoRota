@@ -14,12 +14,12 @@ class RuleFormPage extends React.Component {
         }
     }
 
-    renderInput = ({ input, label, meta }) => {
+    renderInput = ({ input, label, meta, type }) => {
         const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
         return (
             <div className={className}>
                 <label>{label}</label>
-                <input {...input} autoComplete="off" />
+                <input {...input} type={type} autoComplete="off" />
                 {this.renderError(meta)}
             </div>
         );
@@ -34,7 +34,8 @@ class RuleFormPage extends React.Component {
             return (
                 <Field name={`${name}.params[${index}].input`} label={param.name}
                     key={param.name}
-                    component={this.renderInput} />
+                    component={this.renderInput}
+                    type={param.type} />
             );
         });
 
@@ -52,7 +53,7 @@ class RuleFormPage extends React.Component {
         const optionsRendered = options.map((x) =>
             <option value={JSON.stringify(x)}
                 key={x.name}>
-                {x.name}
+                {x.niceName}
             </option>
         );
 
@@ -87,12 +88,7 @@ class RuleFormPage extends React.Component {
         return (
             <ul style={{ "paddingRight": "40px" }}>
 
-                <div className="ui center aligned container">
-                    <div className="ui field"></div>
-                    <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
-                        Add Rule
-                    </button>
-                </div>
+                <div className="ui field"></div>
 
                 {fields.map((rule, index) => (
                     <div key={index} className="ui segment">
@@ -110,6 +106,12 @@ class RuleFormPage extends React.Component {
                     </div>
                 ))
                 }
+
+                <div className="ui center aligned container">
+                    <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
+                        Add Rule
+                    </button>
+                </div>
             </ul>
         );
     }

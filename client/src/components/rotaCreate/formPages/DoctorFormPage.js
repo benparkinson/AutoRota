@@ -32,12 +32,7 @@ const renderDoctors = ({ fields }) => {
     return (
         <ul style={{ "paddingRight": "40px" }}>
 
-            <div className="ui center aligned container">
-                <div className="ui field"></div>
-                <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
-                    Add Doctor
-                </button>
-            </div>
+            <div className="ui field"></div>
 
             {fields.map((doctor, index) => (
                 <div key={index} className="ui segment">
@@ -55,6 +50,12 @@ const renderDoctors = ({ fields }) => {
                 </div>
             ))
             }
+
+            <div className="ui center aligned container">
+                <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
+                    Add Doctor
+                </button>
+            </div>
         </ul>
     );
 }

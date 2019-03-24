@@ -52,12 +52,7 @@ class ShiftDefinitionFormPage extends React.Component {
         return (
             <ul style={{ "paddingRight": "40px" }}>
 
-                <div className="ui center aligned container">
-                    <div className="ui field"></div>
-                    <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
-                        Add Shift Definition
-                    </button>
-                </div>
+                <div className="ui field"></div>
 
                 {fields.map((shiftDefinition, index) => (
                     <div key={index} className="ui segment">
@@ -69,7 +64,7 @@ class ShiftDefinitionFormPage extends React.Component {
                         >
                             <i className="center aligned trash icon"></i>
                         </button>
-                        <strong className="ui header">Shift Definition #{index + 1}</strong>
+                        <strong className="ui header">Shift #{index + 1}</strong>
                         <div className="three fields">
                             <Field name={`${shiftDefinition}.shiftName`}
                                 component={this.renderInput} type="text" label="Shift Name" />
@@ -84,6 +79,12 @@ class ShiftDefinitionFormPage extends React.Component {
                     </div>
                 ))
                 }
+
+                <div className="ui center aligned container">
+                    <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
+                        Add Shift Definition
+                    </button>
+                </div>
             </ul>
         );
     }

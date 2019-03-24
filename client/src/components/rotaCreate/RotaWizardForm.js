@@ -12,6 +12,7 @@ import SoftRuleFormPage from './formPages/SoftRuleFormPage';
 const defaultFormValues = {
     "softRules": [
         {
+            "niceName": "Balance of Average Hours across Doctors",
             "name": "AverageHoursBalance",
             "unique": true,
             "params": [
@@ -23,17 +24,18 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Allocate Shifts in Blocks",
             "name": "ShiftBlocks",
             "unique": false,
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "string",
+                    "type": "text",
                     "input": "Night"
                 },
                 {
                     "name": "DaysInBlock",
-                    "type": "string",
+                    "type": "text",
                     "input": "friday,saturday,sunday"
                 },
                 {
@@ -44,17 +46,18 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Allocate Shifts in Blocks",
             "name": "ShiftBlocks",
             "unique": false,
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "string",
+                    "type": "text",
                     "input": "Night"
                 },
                 {
                     "name": "DaysInBlock",
-                    "type": "string",
+                    "type": "text",
                     "input": "monday,tuesday,wednesday,thursday"
                 },
                 {
@@ -65,17 +68,18 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Allocate Shifts in Blocks",
             "name": "ShiftBlocks",
             "unique": false,
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "string",
+                    "type": "text",
                     "input": "LongDay"
                 },
                 {
                     "name": "DaysInBlock",
-                    "type": "string",
+                    "type": "text",
                     "input": "friday,saturday,sunday"
                 },
                 {
@@ -86,6 +90,7 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Balance of Shift Types across Doctors",
             "name": "ShiftTypeBalance",
             "unique": true,
             "params": [
@@ -137,6 +142,7 @@ const defaultFormValues = {
     ],
     "hardRules": [
         {
+            "niceName": "Minimum Hours Between Shifts",
             "name": "MinHoursBetweenShifts",
             "unique": true,
             "params": [
@@ -148,12 +154,13 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Maximum Consecutive Shifts",
             "name": "MaxConsecutiveShifts",
             "unique": false,
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "string",
+                    "type": "text",
                     "input": "LongDay"
                 },
                 {
@@ -164,12 +171,13 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Maximum Consecutive Shifts",
             "name": "MaxConsecutiveShifts",
             "unique": false,
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "string",
+                    "type": "text",
                     "input": "Night"
                 },
                 {
@@ -180,6 +188,7 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Maximum Hours Per Week",
             "name": "MaxHoursPerWeek",
             "unique": true,
             "params": [
@@ -191,12 +200,14 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "No More Than One Weekend In a Row",
             "name": "NoMoreThanOneWeekendInARow",
             "unique": true,
             "params": [
             ]
         },
         {
+            "niceName": "Maximum Average Hours Per Week",
             "name": "MaxAverageHoursPerWeek",
             "unique": true,
             "params": [
@@ -208,17 +219,18 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Minimum Hours Break After Consecutive Shifts",
             "name": "MinHoursBreakAfterConsecutiveShifts",
             "unique": false,
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "string",
+                    "type": "text",
                     "input": "LongDay"
                 },
                 {
                     "name": "MaxConsecutive",
-                    "type": "string",
+                    "type": "text",
                     "input": "4"
                 },
                 {
@@ -229,17 +241,18 @@ const defaultFormValues = {
             ]
         },
         {
+            "niceName": "Minimum Hours Break After Consecutive Shifts",
             "name": "MinHoursBreakAfterConsecutiveShifts",
             "unique": false,
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "string",
+                    "type": "text",
                     "input": "Night"
                 },
                 {
                     "name": "MaxConsecutive",
-                    "type": "string",
+                    "type": "text",
                     "input": "3,4"
                 },
                 {

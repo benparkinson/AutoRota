@@ -9,13 +9,13 @@ public class RuleController {
     @GetMapping("/api/rules/hard/get")
     public String getHardRules() {
         return "[" +
-                "    { \"name\": \"\", \"unique\": false, \"params\": [] },\n" +
-                "    { \"name\": \"MinHoursBetweenShifts\", \"unique\": true, \"params\": [{ \"name\": \"MinHours\", \"type\": \"number\" }] },\n" +
-                "    { \"name\": \"MaxAverageHoursPerWeek\", \"unique\": true, \"params\": [{ \"name\": \"MaxHours\", \"type\": \"number\" }] },\n" +
-                "    { \"name\": \"MaxConsecutiveShifts\", \"unique\": false, \"params\": [{ \"name\": \"ShiftName\", \"type\": \"string\" }, { \"name\": \"MaxConsecutive\", \"type\": \"number\" }] },\n" +
-                "    { \"name\": \"MaxHoursPerWeek\", \"unique\": true, \"params\": [{ \"name\": \"MaxHours\", \"type\": \"number\" }] },\n" +
-                "    { \"name\": \"NoMoreThanOneWeekendInARow\", \"unique\": true, \"params\": [] },\n" +
-                "    { \"name\": \"MinHoursBreakAfterConsecutiveShifts\", \"unique\": false, \"params\": [{ \"name\": \"ShiftName\", \"type\": \"string\" }, { \"name\": \"MaxConsecutive\", \"type\": \"string\" }, { \"name\": \"MinHours\", \"type\": \"number\" }] }\n" +
+                "    { \"niceName\": \"\", \"name\": \"\", \"unique\": false, \"params\": [] },\n" +
+                "    { \"niceName\": \"Minimum Hours Between Shifts\", \"name\": \"MinHoursBetweenShifts\", \"unique\": true, \"params\": [{ \"name\": \"MinHours\", \"type\": \"number\" }] },\n" +
+                "    { \"niceName\": \"Maximum Average Hours Per Week\", \"name\": \"MaxAverageHoursPerWeek\", \"unique\": true, \"params\": [{ \"name\": \"MaxHours\", \"type\": \"number\" }] },\n" +
+                "    { \"niceName\": \"Maximum Consecutive Shifts\", \"name\": \"MaxConsecutiveShifts\", \"unique\": false, \"params\": [{ \"name\": \"ShiftName\", \"type\": \"text\" }, { \"name\": \"MaxConsecutive\", \"type\": \"number\" }] },\n" +
+                "    { \"niceName\": \"Maximum Hours Per Week\", \"name\": \"MaxHoursPerWeek\", \"unique\": true, \"params\": [{ \"name\": \"MaxHours\", \"type\": \"number\" }] },\n" +
+                "    { \"niceName\": \"No More Than One Weekend In a Row\", \"name\": \"NoMoreThanOneWeekendInARow\", \"unique\": true, \"params\": [] },\n" +
+                "    { \"niceName\": \"Minimum Hours Break After Consecutive Shifts\", \"name\": \"MinHoursBreakAfterConsecutiveShifts\", \"unique\": false, \"params\": [{ \"name\": \"ShiftName\", \"type\": \"text\" }, { \"name\": \"MaxConsecutive\", \"type\": \"text\" }, { \"name\": \"MinHours\", \"type\": \"number\" }] }\n" +
                 "    ]";
     }
 
@@ -23,11 +23,13 @@ public class RuleController {
     public String getSoftRules() {
         return "[\n" +
                 "  {\n" +
+                "    \"niceName\": \"\"," +
                 "    \"name\": \"\",\n" +
                 "    \"unique\": false,\n" +
                 "    \"params\": []\n" +
                 "  },\n" +
                 "  {\n" +
+                "    \"niceName\": \"Balance of Average Hours across Doctors\",\n" +
                 "    \"name\": \"AverageHoursBalance\",\n" +
                 "    \"unique\": true,\n" +
                 "    \"params\": [\n" +
@@ -38,16 +40,17 @@ public class RuleController {
                 "    ]\n" +
                 "  },\n" +
                 "  {\n" +
+                "    \"niceName\": \"Allocate Shifts in Blocks\",\n" +
                 "    \"name\": \"ShiftBlocks\",\n" +
                 "    \"unique\": false,\n" +
                 "    \"params\": [\n" +
                 "      {\n" +
                 "        \"name\": \"ShiftName\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"text\"\n" +
                 "      },\n" +
                 "      {\n" +
                 "        \"name\": \"DaysInBlock\",\n" +
-                "        \"type\": \"string\"\n" +
+                "        \"type\": \"text\"\n" +
                 "      },\n" +
                 "      {\n" +
                 "        \"name\": \"Weight\",\n" +
@@ -56,6 +59,7 @@ public class RuleController {
                 "    ]\n" +
                 "  },\n" +
                 "  {\n" +
+                "    \"niceName\": \"Balance of Shift Types across Doctors\",\n"+
                 "    \"name\": \"ShiftTypeBalance\",\n" +
                 "    \"unique\": true,\n" +
                 "    \"params\": [\n" +
