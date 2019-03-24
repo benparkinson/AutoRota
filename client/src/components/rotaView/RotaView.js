@@ -44,7 +44,7 @@ class RotaView extends React.Component {
         return (
             <>
                 <Link to="/rotas">
-                    <button className="ui labeled icon button">
+                    <button className="ui labeled icon secondary button">
                         <i className="left chevron icon"></i>
                         All Rotas
                     </button>

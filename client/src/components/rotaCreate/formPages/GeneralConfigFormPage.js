@@ -29,7 +29,8 @@ const GeneralConfigFormPage = (props) => {
     return (
         <form onSubmit={props.handleSubmit}
             className="ui form error">
-            <div style={{ "paddingRight": "40px", "paddingLeft": "40px" }}>
+            <div className="ui field"></div>
+            <div style={{ "paddingRight": "40px", "paddingLeft": "40px" }} className="ui field">
                 <div className="ui segment">
                     <strong className="ui header">Dates</strong>
                     <div className="two fields">

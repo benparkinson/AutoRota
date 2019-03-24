@@ -346,7 +346,7 @@ class RotaWizardForm extends React.Component {
 
     renderSubmitContent = () => {
         const submitContent = this.state.currentPage === pageOrder.length - 1 ? 'Submit' : <i className="arrow circle right icon" />;
-        const className = this.state.currentPage === pageOrder.length - 1 ? "ui button primary right floated" : "ui icon basic button right floated";
+        const className = this.state.currentPage === pageOrder.length - 1 ? "ui button field primary right floated" : "ui icon basic button right floated";
         return (
             <button type="submit" className={className} >
                 {submitContent}
@@ -355,7 +355,7 @@ class RotaWizardForm extends React.Component {
     }
 
     renderBackButton = (handleBack) => {
-        const fieldName = this.state.currentPage === 0 ? "ui icon basic disabled button" : "ui icon basic button";
+        const fieldName = this.state.currentPage === 0 ? "ui icon field basic disabled button" : "ui icon basic button";
         return (
             <button type="button" className={fieldName} onClick={handleBack}>
                 <i className="arrow circle left icon" />

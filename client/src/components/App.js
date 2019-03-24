@@ -1,5 +1,7 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+
 import RotaCreate from './rotaCreate/RotaCreate';
 import RotaView from './rotaView/RotaView';
 import RotaList from './rotaView/RotaList';
@@ -10,6 +12,9 @@ import history from '../history';
 const App = () => {
     return (
         <div className="ui container">
+            <Helmet>
+                <style>{'body { background-color: #d7e2f7; }'}</style>
+            </Helmet>
             <Router history={history}>
                 <div>
                     <Header />

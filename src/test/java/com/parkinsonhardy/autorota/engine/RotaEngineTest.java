@@ -188,6 +188,8 @@ public class RotaEngineTest extends RotaEngineTestBase {
         rotaEngine.addEmployee(new Employee("The Doctor"));
         rotaEngine.addEmployee(new Employee("Doctor Octopus"));
         rotaEngine.addEmployee(new Employee("Doctor Doom"));
+        rotaEngine.addEmployee(new Employee("Doctor Doom2"));
+        rotaEngine.addEmployee(new Employee("Doctor Doom3"));
         addShiftRequirementForEveryDay(rotaEngine, "Night", 2);
         addShiftRequirementForEveryDay(rotaEngine, "LongDay", 2);
         addShiftRequirementForEveryDay(rotaEngine, "Day", 2);
@@ -207,7 +209,7 @@ public class RotaEngineTest extends RotaEngineTestBase {
         rotaEngine.addSoftRule(new ShiftTypeBalanceSoftRule(4, rotaEngine.getShiftTypes()));
 
         DateTime monday = DateTime.parse("2019-01-07");
-        DateTime sixWeeksFromNow = monday.plusWeeks(12);
+        DateTime sixWeeksFromNow = monday.plusWeeks(52);
 
         try {
             rotaEngine.assignShifts(monday, sixWeeksFromNow);
