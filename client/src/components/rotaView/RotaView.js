@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { STATUS_ERROR, STATUS_IN_PROGRESS } from './constants';
+import Table from 'react-bootstrap/Table';
 
+import { STATUS_ERROR, STATUS_IN_PROGRESS } from './constants';
 import { fetchRota } from '../../actions';
 
 class RotaView extends React.Component {
@@ -33,10 +34,52 @@ class RotaView extends React.Component {
 
         return (
             <div className="ui raised segment">
-                {this.props.rota.stringRepresentation.split('\n').map((line, key) => {
-                    return <React.Fragment key={key}>{line}<br /></React.Fragment>
-                })}
+                {this.renderRota()}
             </div >
+        );
+    }
+
+    renderRota = () => {
+        const rota = this.props.rota;
+
+        const lines = rota.stringRepresentation.split('\n');
+
+        const header = lines[0].split(',').map(h => {
+            return (
+                <th>{h}</th>
+            );
+        });
+
+        lines.shift(); // remove header line
+
+        const body = lines.map(line => {
+            const cells = line.split(',').map((cell, index) => {
+                if (index == 0) {
+                    return (
+                        <th>{cell}</th>
+                    );
+                }
+                return (
+                    <td>{cell}</td>
+                );
+            });
+
+            return (
+                <tr>{cells}</tr>
+            );
+        })
+
+        return (
+            <Table striped bordered hover size="sm">
+                <thead>
+                    <tr>
+                        {header}
+                    </tr>
+                </thead>
+                <tbody>
+                    {body}
+                </tbody>
+            </Table>
         );
     }
 

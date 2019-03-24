@@ -10,7 +10,7 @@ public class TestPlannerRotaEngine extends PlannerRotaEngine {
     protected SolverFactory<RotaSolution> createSolverFactory() {
         SolverFactory<RotaSolution> solverFactory = super.createSolverFactory();
         TerminationConfig terminationConfig = new TerminationConfig();
-        terminationConfig.setSecondsSpentLimit(300L);
+        terminationConfig.setSecondsSpentLimit(10L);
         solverFactory.getSolverConfig().setTerminationConfig(terminationConfig);
         return solverFactory;
     }

@@ -188,8 +188,6 @@ public class RotaEngineTest extends RotaEngineTestBase {
         rotaEngine.addEmployee(new Employee("The Doctor"));
         rotaEngine.addEmployee(new Employee("Doctor Octopus"));
         rotaEngine.addEmployee(new Employee("Doctor Doom"));
-        rotaEngine.addEmployee(new Employee("Doctor Doom2"));
-        rotaEngine.addEmployee(new Employee("Doctor Doom3"));
         addShiftRequirementForEveryDay(rotaEngine, "Night", 2);
         addShiftRequirementForEveryDay(rotaEngine, "LongDay", 2);
         addShiftRequirementForEveryDay(rotaEngine, "Day", 2);
@@ -209,7 +207,7 @@ public class RotaEngineTest extends RotaEngineTestBase {
         rotaEngine.addSoftRule(new ShiftTypeBalanceSoftRule(4, rotaEngine.getShiftTypes()));
 
         DateTime monday = DateTime.parse("2019-01-07");
-        DateTime sixWeeksFromNow = monday.plusWeeks(52);
+        DateTime sixWeeksFromNow = monday.plusWeeks(12);
 
         try {
             rotaEngine.assignShifts(monday, sixWeeksFromNow);
@@ -224,8 +222,11 @@ public class RotaEngineTest extends RotaEngineTestBase {
     private void printRota(RotaEngine rotaEngine, DateTime startDate, DateTime endDate) {
         StringBuilder sb = new StringBuilder();
         sb.append(",");
+        String prefix = "";
         for (Employee employee : rotaEngine.getEmployees()) {
-            sb.append(employee.getName()).append(",");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(employee.getName());
         }
 
         sb.append("\n");
@@ -233,55 +234,72 @@ public class RotaEngineTest extends RotaEngineTestBase {
         for (DateTime dt = startDate; dt.isBefore(endDate); dt = dt.plusDays(1)) {
             sb.append(dt.toString("yyyy-MM-dd EEE")).append(",");
 
+            prefix = "";
             for (Employee employee : rotaEngine.getEmployees()) {
+                sb.append(prefix);
+                prefix = ",";
                 for (Shift shift : employee.getShifts()) {
                     if (shift.getStartTime().withTimeAtStartOfDay().equals(dt)) {
                         sb.append(shift.getShiftType());
                         break;
                     }
                 }
-                sb.append(",");
             }
             sb.append("\n");
         }
 
         sb.append("Number of Days,");
+        prefix = "";
         for (Employee employee : rotaEngine.getEmployees()) {
             int numberOfDays = countShifts(employee, "Day");
-            sb.append(numberOfDays).append(",");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(numberOfDays);
         }
         sb.append("\n");
 
         sb.append("Number of LongDays,");
+        prefix = "";
         for (Employee employee : rotaEngine.getEmployees()) {
             int numberOfDays = countShifts(employee, "LongDay");
-            sb.append(numberOfDays).append(",");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(numberOfDays);
         }
         sb.append("\n");
 
         sb.append("Number of Nights,");
+        prefix = "";
         for (Employee employee : rotaEngine.getEmployees()) {
             int numberOfDays = countShifts(employee, "Night");
-            sb.append(numberOfDays).append(",");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(numberOfDays);
         }
         sb.append("\n");
 
         sb.append("Total Hours,");
+        prefix = "";
         for (Employee employee : rotaEngine.getEmployees()) {
             int totalHours = countHours(employee);
-            sb.append(totalHours).append(",");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(totalHours);
         }
         sb.append("\n");
 
         sb.append("Average hours per week,");
+        prefix = "";
         for (Employee employee : rotaEngine.getEmployees()) {
             int totalHours = countHours(employee);
             float averageHours = (float) totalHours / (new Duration(startDate, endDate).getStandardDays() / 7f);
-            sb.append(averageHours).append(",");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(averageHours);
         }
         sb.append("\n\n");
         System.out.println(sb.toString());
-}
+    }
 
     private int countHours(Employee employee) {
         int totalHours = 0;
