@@ -13,7 +13,7 @@ export const renderError = ({ error, touched }) => {
 }
 
 // for some strange reason checkbox labels have to be after the input or 
-// else it won't toggle on click, probably some SemanticUI quirk.
+// else it won't toggle on click, probably some SemanticUI quirk.   
 const renderToggle = (input, label, meta) => {
     const className = "field ui toggle checkbox";
     return (
