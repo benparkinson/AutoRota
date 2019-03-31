@@ -23,7 +23,7 @@
     "params": [
       {
         "name": "ShiftName",
-        "type": "text"
+        "type": "shift"
       },
       {
         "name": "DaysInBlock",

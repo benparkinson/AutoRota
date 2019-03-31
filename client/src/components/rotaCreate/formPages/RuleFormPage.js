@@ -3,16 +3,47 @@ import { Field, FieldArray } from 'redux-form';
 import { renderInput, renderError } from './formRender';
 
 class RuleFormPage extends React.Component {
+
+    renderShiftOptions = ({ input, label, meta }) => {
+        if (!this.props.shiftTypes)
+            return null;
+
+        const optionsRendered = this.props.shiftTypes.map((x) =>
+            <option value={x}
+                key={x}>
+                {x}
+            </option>
+        );
+
+        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
+        return (
+            <div className={className}>
+                <label>{label}</label>
+                <select className="ui dropdown">
+                    {optionsRendered}
+                </select>
+                {renderError(meta)}
+            </div>
+        );
+    }
+
     renderRuleParams(name, rule) {
         if (!rule || !rule.params || rule.params.length === 0) {
             return null;
         }
 
         const createField = (param, index) => {
+            let component;
+            if (param.type === "shift") {
+                component = this.renderShiftOptions;
+            } else {
+                component = renderInput
+            }
+
             return (
                 <Field name={`${name}.params[${index + i}].input`} label={param.name}
                     key={param.name}
-                    component={renderInput}
+                    component={component}
                     type={param.type} />
             );
         }

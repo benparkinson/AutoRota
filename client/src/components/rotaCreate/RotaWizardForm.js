@@ -30,7 +30,7 @@ const defaultFormValues = {
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "text",
+                    "type": "shift",
                     "input": "Night"
                 },
                 {
@@ -58,7 +58,7 @@ const defaultFormValues = {
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "text",
+                    "type": "shift",
                     "input": "Night"
                 },
                 {
@@ -86,7 +86,7 @@ const defaultFormValues = {
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "text",
+                    "type": "shift",
                     "input": "LongDay"
                 },
                 {
@@ -190,7 +190,7 @@ const defaultFormValues = {
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "text",
+                    "type": "shift",
                     "input": "LongDay"
                 },
                 {
@@ -207,7 +207,7 @@ const defaultFormValues = {
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "text",
+                    "type": "shift",
                     "input": "Night"
                 },
                 {
@@ -255,7 +255,7 @@ const defaultFormValues = {
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "text",
+                    "type": "shift",
                     "input": "LongDay"
                 },
                 {
@@ -277,7 +277,7 @@ const defaultFormValues = {
             "params": [
                 {
                     "name": "ShiftName",
-                    "type": "text",
+                    "type": "shift",
                     "input": "Night"
                 },
                 {

@@ -13,7 +13,7 @@ class HardRuleFormPage extends React.Component {
     render() {
         return (
             <form onSubmit={this.props.handleSubmit} className="ui form error">
-                <RuleFormPage name="hardRules" possibleRules={this.props.possibleRules} />
+                <RuleFormPage name="hardRules" possibleRules={this.props.possibleRules} shiftTypes={this.props.shiftTypes} />
                 {this.props.backButton}
                 {this.props.submitButton}
             </form>
@@ -21,9 +21,12 @@ class HardRuleFormPage extends React.Component {
     }
 }
 
-const mapStateToProps = ({ rules }) => {
+const mapStateToProps = ({ rules, form }) => {
+    const { shiftDefinitions } = form.rotaWizard.values;
+    const shiftTypes = shiftDefinitions.map(shift => shift.shiftName);
     return {
-        possibleRules: rules.hardRules
+        possibleRules: rules.hardRules,
+        shiftTypes
     };
 }
 
