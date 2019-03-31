@@ -346,23 +346,28 @@ const defaultFormValues = {
 const pageOrder = [
     {
         comp: ShiftDefinitionFormPage,
-        name: 'Define Shifts'
+        name: 'Define Shifts',
+        icon: "clock outline"
     },
     {
         comp: HardRuleFormPage,
-        name: 'Set Hard Rules'
+        name: 'Set Hard Rules',
+        icon: "clipboard"
     },
     {
         comp: SoftRuleFormPage,
-        name: 'Set Soft Rules'
+        name: 'Set Soft Rules',
+        icon: "clipboard outline"
     },
     {
         comp: DoctorFormPage,
-        name: 'Define Doctors'
+        name: 'Define Doctors',
+        icon: "stethoscope"
     },
     {
         comp: GeneralConfigFormPage,
-        name: 'Final Configuration'
+        name: 'Final Configuration',
+        icon: "cogs"
     }
 ];
 
@@ -373,16 +378,21 @@ class RotaWizardForm extends React.Component {
     }
 
     renderPageNames = () => {
-        return pageOrder.map(({ name }, index) => {
+        return pageOrder.map(({ name, icon }, index) => {
             let buttonType;
             if (this.state.currentPage === index) {
-                buttonType = 'black';
+                buttonType = 'active ';
             } else {
                 buttonType = '';
             }
             return (
-                <button key={index} className={`ui ${buttonType} basic button`} onClick={() => this.setCurrentPage(index)}>
-                    {name}
+                <button key={index} className={`link ${buttonType} step`} onClick={() => this.setCurrentPage(index)}>
+                    <i className={`${icon} icon`}></i>
+                    <div className="content">
+                        <div className="title">
+                            {name}
+                        </div>
+                    </div>
                 </button>
             );
         });
@@ -424,7 +434,7 @@ class RotaWizardForm extends React.Component {
 
         return (
             <div>
-                <div className={`${pageCount} ui basic buttons`}>
+                <div className={`ui ${pageCount} steps`}>
                     {pageNames}
                 </div>
                 <FormPage onSubmit={handleSubmit} submitButton={submitButton} backButton={backButton}
