@@ -10,7 +10,8 @@ public enum RuleType {
     MinHoursBreakAfterConsecutiveShifts,
     AverageHoursBalance(false, true),
     ShiftBlocks(false, true),
-    ShiftTypeBalance(false, true);
+    ShiftTypeBalance(false, true),
+    AvoidSingleShifts(false, true);
 
     private final boolean holistic;
     private final boolean soft;
@@ -20,7 +21,6 @@ public enum RuleType {
     }
 
     RuleType(boolean holistic, boolean soft) {
-
         this.holistic = holistic;
         this.soft = soft;
     }

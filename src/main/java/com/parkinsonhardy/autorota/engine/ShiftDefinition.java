@@ -28,11 +28,6 @@ public class ShiftDefinition {
         return endTime;
     }
 
-    // legacy, will remove when Planner is proven
-    public boolean isAllocateInBlocks() {
-        return false;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

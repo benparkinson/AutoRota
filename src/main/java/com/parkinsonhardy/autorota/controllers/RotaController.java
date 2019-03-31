@@ -10,6 +10,7 @@ import com.parkinsonhardy.autorota.engine.Shift;
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import com.parkinsonhardy.autorota.model.*;
+import com.parkinsonhardy.autorota.util.RotaUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
@@ -45,27 +46,10 @@ public class RotaController {
         logger.info(String.format("Received request for Rota creation: %s", args.toString()));
 
         RotaEngine rotaEngine = new PlannerRotaEngine();
-        ShiftCreator shiftCreator = new ShiftCreator();
-        List<ShiftDefinitionArgs> shiftDefinitions = args.getShiftDefinitions();
-        for (ShiftDefinitionArgs shiftDefinitionArgs : shiftDefinitions) {
-            shiftCreator.addShiftDefinition(rotaEngine, shiftDefinitionArgs);
-        }
-        Set<String> shiftTypes = rotaEngine.getShiftTypes();
 
-        RuleFactory ruleFactory = new RuleFactory(shiftTypes);
-        for (RuleArgs ruleArgs : args.getHardRules()) {
-            ruleFactory.addRule(rotaEngine, ruleArgs);
-        }
-
-        for (RuleArgs ruleArgs : args.getSoftRules()) {
-            ruleFactory.addRule(rotaEngine, ruleArgs);
-        }
-
-        EmployeeCreator employeeCreator = new EmployeeCreator();
-        for (DoctorArgs doctorArgs : args.getDoctors()) {
-            Employee employee = employeeCreator.create(doctorArgs);
-            rotaEngine.addEmployee(employee);
-        }
+        setupShifts(args, rotaEngine);
+        setupRules(args, rotaEngine);
+        setupEmployees(args, rotaEngine);
 
         DateTime startDate = DateTime.parse(args.getStartDate());
         DateTime endDate = DateTime.parse(args.getEndDate());
@@ -80,7 +64,7 @@ public class RotaController {
         ForkJoinPool.commonPool().submit(() -> {
                     try {
                         rotaEngine.assignShifts(startDate, endDate);
-                        String rotaPrinted = printRota(rotaEngine, startDate, endDate);
+                        String rotaPrinted = RotaUtils.stringifyRota(rotaEngine.getEmployees(), startDate, endDate);
                         // should this find by Id again and get from DB? or ok to hang on to reference...?
                         submitted.setStatus("Complete");
                         submitted.setStringRepresentation(rotaPrinted);
@@ -100,109 +84,38 @@ public class RotaController {
         return submitted;
     }
 
-    private String printRota(RotaEngine rotaEngine, DateTime startDate, DateTime endDate) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(",");
-        String prefix = "";
-        for (Employee employee : rotaEngine.getEmployees()) {
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(employee.getName());
+    private void setupEmployees(RotaCreationArgs args, RotaEngine rotaEngine) throws RotaException {
+        EmployeeCreator employeeCreator = new EmployeeCreator();
+        for (DoctorArgs doctorArgs : args.getDoctors()) {
+            Employee employee = employeeCreator.create(doctorArgs);
+            rotaEngine.addEmployee(employee);
         }
-
-        sb.append("\n");
-
-        for (DateTime dt = startDate; dt.isBefore(endDate); dt = dt.plusDays(1)) {
-            sb.append(dt.toString("yyyy-MM-dd EEE")).append(",");
-
-            prefix = "";
-            for (Employee employee : rotaEngine.getEmployees()) {
-                sb.append(prefix);
-                prefix = ",";
-                for (Shift shift : employee.getShifts()) {
-                    if (shift.getStartTime().withTimeAtStartOfDay().equals(dt)) {
-                        sb.append(shift.getShiftType());
-                        break;
-                    }
-                }
-            }
-            sb.append("\n");
-        }
-
-        sb.append("Number of Days,");
-        prefix = "";
-        for (Employee employee : rotaEngine.getEmployees()) {
-            int numberOfDays = countShifts(employee, "Day");
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(numberOfDays);
-        }
-        sb.append("\n");
-
-        sb.append("Number of LongDays,");
-        prefix = "";
-        for (Employee employee : rotaEngine.getEmployees()) {
-            int numberOfDays = countShifts(employee, "LongDay");
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(numberOfDays);
-        }
-        sb.append("\n");
-
-        sb.append("Number of Nights,");
-        prefix = "";
-        for (Employee employee : rotaEngine.getEmployees()) {
-            int numberOfDays = countShifts(employee, "Night");
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(numberOfDays);
-        }
-        sb.append("\n");
-
-        sb.append("Total Hours,");
-        prefix = "";
-        for (Employee employee : rotaEngine.getEmployees()) {
-            int totalHours = countHours(employee);
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(totalHours);
-        }
-        sb.append("\n");
-
-        sb.append("Average hours per week,");
-        prefix = "";
-        for (Employee employee : rotaEngine.getEmployees()) {
-            int totalHours = countHours(employee);
-            float averageHours = (float) totalHours / (new Duration(startDate, endDate).getStandardDays() / 7f);
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(averageHours);
-        }
-        return sb.toString();
     }
 
-    private int countHours(Employee employee) {
-        int totalHours = 0;
-        for (Shift shift : employee.getShifts()) {
-            totalHours += ShiftHelper.calculateShiftHours(shift.getStartTime(), shift.getEndTime());
+    private void setupRules(RotaCreationArgs args, RotaEngine rotaEngine) {
+        Set<String> shiftTypes = rotaEngine.getShiftTypes();
+        RuleFactory ruleFactory = new RuleFactory(shiftTypes);
+        for (RuleArgs ruleArgs : args.getHardRules()) {
+            ruleFactory.addRule(rotaEngine, ruleArgs);
         }
-        return totalHours;
+
+        for (RuleArgs ruleArgs : args.getSoftRules()) {
+            ruleFactory.addRule(rotaEngine, ruleArgs);
+        }
     }
 
-    private int countShifts(Employee employee, String shiftType) {
-        int totalShifts = 0;
-        for (Shift shift : employee.getShifts()) {
-            if (shift.getShiftType().equals(shiftType)) {
-                totalShifts += 1;
-            }
+    private void setupShifts(RotaCreationArgs args, RotaEngine rotaEngine) {
+        ShiftCreator shiftCreator = new ShiftCreator();
+        List<ShiftDefinitionArgs> shiftDefinitions = args.getShiftDefinitions();
+        for (ShiftDefinitionArgs shiftDefinitionArgs : shiftDefinitions) {
+            shiftCreator.addShiftDefinition(rotaEngine, shiftDefinitionArgs);
         }
-        return totalShifts;
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void handleException(Exception e) {
-        logger.warn("Bad Gateway exception", e);
+        logger.error("Error caught handling request!", e);
     }
 
 }

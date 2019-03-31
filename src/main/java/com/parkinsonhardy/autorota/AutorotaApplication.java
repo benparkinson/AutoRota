@@ -11,5 +11,4 @@ public class AutorotaApplication {
 		DateTimeZone.setDefault(DateTimeZone.UTC);
 		SpringApplication.run(AutorotaApplication.class, args);
 	}
-
 }

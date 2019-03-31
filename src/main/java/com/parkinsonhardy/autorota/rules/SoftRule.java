@@ -20,6 +20,9 @@ public abstract class SoftRule {
     }
 
     public int calculateSoftScore(List<Employee> employees) {
+        if (weight == 0)
+            return 0;
+
         return weighResult(innerCalculateScore(employees));
     }
 

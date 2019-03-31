@@ -43,10 +43,26 @@ public class RuleFactory {
             RuleParamArgs weight = getParamArgs(ruleArgs, "Weight");
             RuleParamArgs shiftName = getParamArgs(ruleArgs, "ShiftName");
             RuleParamArgs daysInBlock = getParamArgs(ruleArgs, "DaysInBlock");
-            // todo this should be better than just comma separated
+            RuleParamArgs force = getParamArgs(ruleArgs, "Force");
+            // todo this should be better than just comma separated obv
             String[] days = daysInBlock.getInput().toUpperCase().split(",");
             List<DayOfWeek> daysOfWeek = Arrays.stream(days).map(DayOfWeek::valueOf).collect(Collectors.toList());
-            return new ShiftBlocksSoftRule(Integer.parseInt(weight.getInput()), new ShiftBlock(shiftName.getInput(), daysOfWeek));
+            boolean mandatory = Boolean.valueOf(force.getInput());
+            // todo this should be clearer on the GUI, and maybe this
+            // rule should be different if forced, need to consider options
+            int weightValue;
+            if (mandatory) {
+                weightValue = 0;
+            } else {
+                weightValue = Integer.parseInt(weight.getInput());
+            }
+            return new ShiftBlocksSoftRule(weightValue,
+                    new ShiftBlock(shiftName.getInput(), daysOfWeek), mandatory);
+        });
+
+        softRuleCreators.put(RuleType.AvoidSingleShifts, ruleArgs -> {
+            RuleParamArgs weight = getParamArgs(ruleArgs, "Weight");
+            return new AvoidSingleShiftsSoftRule(Integer.parseInt(weight.getInput()));
         });
 
         ruleCreators.put(RuleType.MinHoursBetweenShifts, ruleArgs -> {

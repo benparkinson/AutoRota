@@ -18,7 +18,7 @@ public class ShiftTypeBalanceSoftRule extends SoftRule {
     @Override
     protected int innerCalculateScore(List<Employee> employees) {
         if (employees.size() == 0) {
-            return 0;
+            return PERFECT_SCORE;
         }
 
         Map<String, List<Float>> shiftCounts = new HashMap<>();

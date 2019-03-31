@@ -2,38 +2,16 @@ import React from 'react';
 import { Field, FieldArray, reduxForm } from 'redux-form';
 import converter from 'number-to-words';
 import validateRotaForm from './validateRotaForm';
+import { renderInput } from './formRender';
 
 class ShiftDefinitionFormPage extends React.Component {
-
-    renderError = ({ error, touched }) => {
-        if (touched && error) {
-            return (
-                <div className="ui error message">
-                    <div className="header">
-                        {error}
-                    </div>
-                </div>
-            );
-        }
-    }
-
-    renderInput = ({ input, label, meta, type }) => {
-        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
-        return (
-            <div className={className}>
-                <label>{label}</label>
-                <input {...input} type={type} autoComplete="off" />
-                {this.renderError(meta)}
-            </div>
-        );
-    }
 
     renderDayRequirements = (shiftDefinition) => {
         const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
         const renderedDays = days.map(day => {
             return (
-                <Field name={`${shiftDefinition}.dayRequirements.${day.toLowerCase()}`} component={this.renderInput}
+                <Field name={`${shiftDefinition}.dayRequirements.${day.toLowerCase()}`} component={renderInput}
                     type="number" label={day} key={day} />
             );
         })
@@ -46,9 +24,6 @@ class ShiftDefinitionFormPage extends React.Component {
     }
 
     renderShiftDefinitions = ({ fields }) => {
-        // todo don't hardcode the padding, this is only hinging on the browser defaulting a ul style to pad 40px
-        // should ideally be relative and probably set the padding on each side to be the same, maybe pass this in so
-        // all form pages are the same?
         return (
             <div>
 
@@ -67,11 +42,11 @@ class ShiftDefinitionFormPage extends React.Component {
                         <strong className="ui header">Shift #{index + 1}</strong>
                         <div className="three fields">
                             <Field name={`${shiftDefinition}.shiftName`}
-                                component={this.renderInput} type="text" label="Shift Name" />
+                                component={renderInput} type="text" label="Shift Name" />
                             <Field name={`${shiftDefinition}.shiftStart`}
-                                component={this.renderInput} type="time" label="Start Time" />
+                                component={renderInput} type="time" label="Start Time" />
                             <Field name={`${shiftDefinition}.shiftEnd`}
-                                component={this.renderInput} type="time" label="End Time" />
+                                component={renderInput} type="time" label="End Time" />
                         </div>
                         <strong># of Doctors Required:
                         </strong>

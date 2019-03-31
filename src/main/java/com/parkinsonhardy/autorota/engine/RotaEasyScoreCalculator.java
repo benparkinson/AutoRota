@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RotaEasyScoreCalculator implements EasyScoreCalculator<RotaSolution> {
 
@@ -26,7 +27,9 @@ public class RotaEasyScoreCalculator implements EasyScoreCalculator<RotaSolution
         int hardScore = 0;
         int softScore = 0;
 
-        List<Shift> shifts = rotaSolution.getShifts();
+        List<Shift> shifts = rotaSolution.getShiftGroups().stream()
+                .flatMap(group -> group.getUnderlyingShifts().stream())
+                .collect(Collectors.toList());
         Map<Employee, List<Shift>> shiftsByEmployee = new HashMap<>();
 
         for (Employee employee : rotaSolution.getEmployees()) {
@@ -65,6 +68,10 @@ public class RotaEasyScoreCalculator implements EasyScoreCalculator<RotaSolution
             for (SoftRule softRule : softRules) {
                 softScore += softRule.calculateSoftScore(employeesToCheck);
             }
+        }
+
+        if (hardScore == 0 && softScore == 0) {
+            int test = 0;
         }
 
         return HardSoftScore.of(hardScore, softScore);

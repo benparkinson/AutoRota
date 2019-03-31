@@ -1,30 +1,8 @@
 import React from 'react';
 import { Field, FieldArray } from 'redux-form';
+import { renderInput, renderError } from './formRender';
 
 class RuleFormPage extends React.Component {
-    renderError = ({ error, touched }) => {
-        if (touched && error) {
-            return (
-                <div className="ui error message">
-                    <div className="header">
-                        {error}
-                    </div>
-                </div>
-            );
-        }
-    }
-
-    renderInput = ({ input, label, meta, type }) => {
-        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
-        return (
-            <div className={className}>
-                <label>{label}</label>
-                <input {...input} type={type} autoComplete="off" />
-                {this.renderError(meta)}
-            </div>
-        );
-    }
-
     renderRuleParams(name, rule) {
         if (!rule || !rule.params || rule.params.length === 0) {
             return null;
@@ -34,7 +12,7 @@ class RuleFormPage extends React.Component {
             return (
                 <Field name={`${name}.params[${index}].input`} label={param.name}
                     key={param.name}
-                    component={this.renderInput}
+                    component={renderInput}
                     type={param.type} />
             );
         });
@@ -76,18 +54,14 @@ class RuleFormPage extends React.Component {
                     {optionsRendered}
                 </select>
                 {this.renderRuleParams(input.name, input.value)}
-                {this.renderError(meta)}
+                {renderError(meta)}
             </div>
         );
     }
 
     renderRules = ({ fields, options }) => {
-        // todo don't hardcode the padding, this is only hinging on the browser defaulting a ul style to pad 40px
-        // should ideally be relative and probably set the padding on each side to be the same, maybe pass this in so
-        // all form pages are the same?
         return (
             <div>
-
                 <div className="ui field"></div>
 
                 {fields.map((rule, index) => (

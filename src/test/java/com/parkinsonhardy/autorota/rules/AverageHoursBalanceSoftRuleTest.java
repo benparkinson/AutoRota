@@ -16,6 +16,17 @@ public class AverageHoursBalanceSoftRuleTest {
     private long employeeId = 0;
 
     @Test
+    public void testOneEmployeeNoShiftsPerfectScore() {
+        AverageHoursBalanceSoftRule rule = new AverageHoursBalanceSoftRule(1);
+        List<Employee> employeeList = new ArrayList<>();
+        employeeList.add(new Employee("Test"));
+
+        int softScore = rule.calculateSoftScore(employeeList);
+
+        Assert.assertEquals(PERFECT_SCORE, softScore);
+    }
+
+    @Test
     public void testOneEmployeePerfectScore() {
         AverageHoursBalanceSoftRule rule = new AverageHoursBalanceSoftRule(1);
         List<Employee> employeeList = new ArrayList<>();

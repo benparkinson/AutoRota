@@ -3,11 +3,10 @@ package com.parkinsonhardy.autorota.engine;
 import org.joda.time.DateTime;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
+import org.optaplanner.core.api.domain.variable.PlanningVariableGraphType;
 
 import java.util.Objects;
-import java.util.UUID;
 
-@PlanningEntity(difficultyWeightFactoryClass = ShiftDifficultyWeightFactory.class)
 public class Shift implements Comparable<Shift> {
 
     private int shiftId;
@@ -15,10 +14,6 @@ public class Shift implements Comparable<Shift> {
     private DateTime startTime;
     private DateTime endTime;
     private Employee employee;
-
-    // for Planner framework
-    public Shift() {
-    }
 
     public Shift(int shiftId, String shiftType, DateTime startTime, DateTime endTime) {
         if (endTime.isBefore(startTime)) {
@@ -31,7 +26,6 @@ public class Shift implements Comparable<Shift> {
         this.endTime = endTime;
     }
 
-    @PlanningVariable(valueRangeProviderRefs = {"employees"})
     public Employee getEmployee() {
         return employee;
     }

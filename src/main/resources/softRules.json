@@ -1,0 +1,65 @@
+[
+  {
+    "niceName": "",
+    "name": "",
+    "unique": false,
+    "params": []
+  },
+  {
+    "niceName": "Balance of Average Hours across Doctors",
+    "name": "AverageHoursBalance",
+    "unique": true,
+    "params": [
+      {
+        "name": "Weight",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "niceName": "Allocate Shifts in Blocks",
+    "name": "ShiftBlocks",
+    "unique": false,
+    "params": [
+      {
+        "name": "ShiftName",
+        "type": "text"
+      },
+      {
+        "name": "DaysInBlock",
+        "type": "text"
+      },
+      {
+        "name": "Weight",
+        "type": "number"
+      },
+      {
+        "name": "Force",
+        "type": "checkbox",
+        "tooltip": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)"
+      }
+    ]
+  },
+  {
+    "niceName": "Balance of Shift Types across Doctors",
+    "name": "ShiftTypeBalance",
+    "unique": true,
+    "params": [
+      {
+        "name": "Weight",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "niceName": "Avoid Assigning Single Shifts",
+    "name": "AvoidSingleShifts",
+    "unique": true,
+    "params": [
+      {
+        "name": "Weight",
+        "type": "number"
+      }
+    ]
+  }
+]

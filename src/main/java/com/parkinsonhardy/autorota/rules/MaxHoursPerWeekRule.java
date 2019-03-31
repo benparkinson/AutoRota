@@ -31,10 +31,16 @@ public class MaxHoursPerWeekRule implements Rule {
                 if (toAdd.getStartTime().isAfter(shift.getStartTime()))
                     continue;
 
-                if (toAdd.getStartTime().isBefore(sevenDaysAgo)) {
+                if (toAdd.getEndTime().isBefore(sevenDaysAgo)) {
                     break;
                 }
-                totalHours += ShiftHelper.calculateShiftHours(shift);
+                DateTime startTime = toAdd.getStartTime();
+                if (toAdd.getStartTime().isBefore(sevenDaysAgo)) {
+                    // part of the shift is within the 7 day window, calculate from the overlap
+                    startTime = sevenDaysAgo;
+                }
+
+                totalHours += ShiftHelper.calculateShiftHours(startTime, toAdd.getEndTime());
             }
 
             if (totalHours > maxHours)

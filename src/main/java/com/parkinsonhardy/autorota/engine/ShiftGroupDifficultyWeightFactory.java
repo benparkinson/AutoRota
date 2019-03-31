@@ -8,12 +8,12 @@ import java.time.DayOfWeek;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ShiftDifficultyWeightFactory implements SelectionSorterWeightFactory<RotaSolution, Shift> {
+public class ShiftGroupDifficultyWeightFactory implements SelectionSorterWeightFactory<RotaSolution, ShiftGroup> {
 
     private List<ShiftBlock> allShiftBlocks;
 
     @Override
-    public ShiftDifficultyWeight createSorterWeight(RotaSolution rotaSolution, Shift shift) {
+    public ShiftDifficultyWeight createSorterWeight(RotaSolution rotaSolution, ShiftGroup shiftGroup) {
         // todo check if one of these gets instantiated with each rota creation, if not then can't cache this!
         if (allShiftBlocks == null) {
             allShiftBlocks = rotaSolution.getSoftRules().stream()
@@ -22,26 +22,40 @@ public class ShiftDifficultyWeightFactory implements SelectionSorterWeightFactor
                     .collect(Collectors.toList());
         }
 
-        return new ShiftDifficultyWeight(getPriorityScore(shift, allShiftBlocks), shift.getShiftId());
+        return new ShiftDifficultyWeight(getPriorityScore(shiftGroup, allShiftBlocks), shiftGroup.getId(), shiftGroup.getShiftType());
     }
 
-    private int getPriorityScore(Shift shift, List<ShiftBlock> allShiftBlocks) {
-        if (isOnWeekend(shift)) {
+    private int getPriorityScore(ShiftGroup shiftGroup, List<ShiftBlock> allShiftBlocks) {
+        if (isOnWeekend(shiftGroup)) {
             return 2;
         }
-        if (shiftInBlock(shift, allShiftBlocks)) {
+        if (shiftInBlock(shiftGroup, allShiftBlocks)) {
             return 1;
         }
         return 0;
     }
 
-    private boolean shiftInBlock(Shift shift, List<ShiftBlock> allShiftBlocks) {
-        for (ShiftBlock shiftBlock : allShiftBlocks) {
-            if (shift.getShiftType().equals(shiftBlock.getShiftType())
-                    && shiftBlock.isForDay(DayOfWeek.of(shift.getStartTime().getDayOfWeek())))
-                return true;
+    private boolean shiftInBlock(ShiftGroup shiftGroup, List<ShiftBlock> allShiftBlocks) {
+        if (shiftGroup.getUnderlyingShifts().size() > 1) {
+            return true;
         }
 
+        for (ShiftBlock shiftBlock : allShiftBlocks) {
+            for (Shift shift : shiftGroup.getUnderlyingShifts()) {
+                if (shift.getShiftType().equals(shiftBlock.getShiftType())
+                        && shiftBlock.isForDay(DayOfWeek.of(shift.getStartTime().getDayOfWeek())))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isOnWeekend(ShiftGroup shiftGroup) {
+        for (Shift shift : shiftGroup.getUnderlyingShifts()) {
+            if (isOnWeekend(shift))
+                return true;
+        }
         return false;
     }
 

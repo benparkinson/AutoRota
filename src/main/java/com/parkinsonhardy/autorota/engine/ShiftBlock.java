@@ -53,4 +53,18 @@ public class ShiftBlock {
     public boolean isForPreviousDay(DayOfWeek dayOfWeek) {
         return daysInBlockSet.contains(dayOfWeek.minus(1));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ShiftBlock that = (ShiftBlock) o;
+        return shiftType.equals(that.shiftType) &&
+                daysInBlockSet.equals(that.daysInBlockSet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(shiftType, daysInBlockSet);
+    }
 }

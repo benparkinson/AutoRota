@@ -16,7 +16,7 @@ public class RotaSolution {
 
     private List<Employee> employees;
 
-    private List<Shift> shifts;
+    private List<ShiftGroup> shiftGroups;
     private List<Rule> rules;
     private List<SoftRule> softRules;
 
@@ -25,9 +25,9 @@ public class RotaSolution {
     // for Planner framework
     public RotaSolution() {}
 
-    public RotaSolution(List<Employee> employees, List<Shift> shifts, List<Rule> rules, List<SoftRule> softRules) {
+    public RotaSolution(List<Employee> employees, List<ShiftGroup> shiftGroups, List<Rule> rules, List<SoftRule> softRules) {
         this.employees = employees;
-        this.shifts = shifts;
+        this.shiftGroups = shiftGroups;
         this.rules = rules;
         this.softRules = softRules;
     }
@@ -39,8 +39,9 @@ public class RotaSolution {
     }
 
     @PlanningEntityCollectionProperty
-    public List<Shift> getShifts() {
-        return shifts;
+    @ValueRangeProvider(id = "shiftGroups")
+    public List<ShiftGroup> getShiftGroups() {
+        return shiftGroups;
     }
 
     @PlanningScore

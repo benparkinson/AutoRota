@@ -19,7 +19,7 @@ const defaultFormValues = {
                 {
                     "name": "Weight",
                     "type": "number",
-                    "input": "6"
+                    "input": "3"
                 }
             ]
         },
@@ -42,6 +42,12 @@ const defaultFormValues = {
                     "name": "Weight",
                     "type": "number",
                     "input": "1"
+                },
+                {
+                    "name": "Force",
+                    "type": "checkbox",
+                    "tooltip": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
+                    "input": true
                 }
             ]
         },
@@ -64,6 +70,12 @@ const defaultFormValues = {
                     "name": "Weight",
                     "type": "number",
                     "input": "1"
+                },
+                {
+                    "name": "Force",
+                    "type": "checkbox",
+                    "tooltip": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
+                    "input": true
                 }
             ]
         },
@@ -85,7 +97,13 @@ const defaultFormValues = {
                 {
                     "name": "Weight",
                     "type": "number",
-                    "input": "1"
+                    "input": "5"
+                },
+                {
+                    "name": "Force",
+                    "type": "checkbox",
+                    "tooltip": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
+                    "input": false
                 }
             ]
         },
@@ -97,7 +115,19 @@ const defaultFormValues = {
                 {
                     "name": "Weight",
                     "type": "number",
-                    "input": "4"
+                    "input": "3"
+                }
+            ]
+        },
+        {
+            "niceName": "Avoid Assigning Single Shifts",
+            "name": "AvoidSingleShifts",
+            "unique": true,
+            "params": [
+                {
+                    "name": "Weight",
+                    "type": "number",
+                    "input": "2"
                 }
             ]
         }

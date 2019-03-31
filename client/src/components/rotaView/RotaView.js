@@ -44,33 +44,33 @@ class RotaView extends React.Component {
 
         const lines = rota.stringRepresentation.split('\n');
 
-        const header = lines[0].split(',').map(h => {
+        const header = lines[0].split(',').map((h, index) => {
             return (
-                <th>{h}</th>
+                <th key={index}>{h}</th>
             );
         });
 
         lines.shift(); // remove header line
 
-        const body = lines.map(line => {
+        const body = lines.map((line, index) => {
             const cells = line.split(',').map((cell, index) => {
-                if (index == 0) {
+                if (index === 0) {
                     return (
-                        <th>{cell}</th>
+                        <th key={index}>{cell}</th>
                     );
                 }
                 return (
-                    <td>{cell}</td>
+                    <td key={index}>{cell}</td>
                 );
             });
 
             return (
-                <tr>{cells}</tr>
+                <tr key={index}>{cells}</tr>
             );
         })
 
         return (
-            <Table striped bordered hover size="sm">
+            <Table striped bordered hover responsive size="sm">
                 <thead>
                     <tr>
                         {header}

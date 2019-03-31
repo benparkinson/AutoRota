@@ -223,4 +223,52 @@ public class MaxHoursPerWeekRuleTest extends RotaEngineTestBase {
 
         Assert.assertFalse(rule.shiftsPassesRule(employee.getShifts()));
     }
+
+    @Test
+    public void testTwoDaysFourNightsBug() {
+        ShiftDefinition night = new ShiftDefinition("Night", LocalTime.parse("20:30"), LocalTime.parse("09:00"));
+        ShiftDefinition day = new ShiftDefinition("Day", LocalTime.parse("08:30"), LocalTime.parse("17:00"));
+
+        Employee employee = new Employee("Real Ben");
+
+        MaxHoursPerWeekRule rule = new MaxHoursPerWeekRule(72);
+
+        DateTime monday = getNextMonday();
+        addShiftToEmployee(day, monday, employee);
+        addShiftToEmployee(day, monday.plusDays(1), employee);
+        addShiftToEmployee(night, monday.plusDays(2), employee);
+        addShiftToEmployee(night, monday.plusDays(3), employee);
+        addShiftToEmployee(night, monday.plusDays(4), employee);
+
+        Assert.assertTrue(rule.shiftsPassesRule(employee.getShifts()));
+
+        addShiftToEmployee(night, monday.plusDays(5), employee);
+
+        Assert.assertTrue(rule.shiftsPassesRule(employee.getShifts()));
+    }
+
+    @Test
+    public void testLongWeekBugBug() {
+        ShiftDefinition night = new ShiftDefinition("Night", LocalTime.parse("20:30"), LocalTime.parse("09:00"));
+        ShiftDefinition longDay = new ShiftDefinition("LongDay", LocalTime.parse("08:30"), LocalTime.parse("21:00"));
+        ShiftDefinition day = new ShiftDefinition("Day", LocalTime.parse("08:30"), LocalTime.parse("17:00"));
+
+        Employee employee = new Employee("Real Ben");
+
+        MaxHoursPerWeekRule rule = new MaxHoursPerWeekRule(72);
+
+        DateTime monday = getNextMonday();
+        addShiftToEmployee(day, monday, employee);
+        addShiftToEmployee(day, monday.plusDays(1), employee);
+        addShiftToEmployee(longDay, monday.plusDays(2), employee);
+        addShiftToEmployee(longDay, monday.plusDays(3), employee);
+        addShiftToEmployee(night, monday.plusDays(4), employee);
+        addShiftToEmployee(night, monday.plusDays(5), employee);
+
+        Assert.assertTrue(rule.shiftsPassesRule(employee.getShifts()));
+
+        addShiftToEmployee(night, monday.plusDays(6), employee);
+
+        Assert.assertFalse(rule.shiftsPassesRule(employee.getShifts()));
+    }
 }

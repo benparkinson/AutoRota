@@ -1,7 +1,5 @@
 package com.parkinsonhardy.autorota.engine;
 
-import org.joda.time.Interval;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +10,6 @@ public class Employee {
     private final String id;
     private final String name;
     private List<Shift> shifts = new ArrayList<>();
-    private float priorityWeight = 0;
 
     public Employee(String id, String name) {
         this.id = id;
@@ -37,34 +34,6 @@ public class Employee {
 
     public void addShift(Shift shift) {
         this.shifts.add(shift);
-    }
-
-    public void removeShift(Shift shift) {
-        // todo consider different collection to make this more efficient. Needs to be ordered for rules to work ideally
-        this.shifts.remove(shift);
-    }
-
-    public boolean isAvailableForShift(Shift potentialShift) {
-        for (Shift shift : shifts) {
-            if (shiftsOverlap(shift, potentialShift)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean shiftsOverlap(Shift shift, Shift potentialShift) {
-        Interval interval1 = new Interval(shift.getStartTime(), shift.getEndTime());
-        Interval interval2 = new Interval(potentialShift.getStartTime(), potentialShift.getEndTime());
-        return interval1.overlaps(interval2);
-    }
-
-    public float getPriorityWeight() {
-        return priorityWeight;
-    }
-
-    public void setPriorityWeight(float priorityWeight) {
-        this.priorityWeight = priorityWeight;
     }
 
     @Override

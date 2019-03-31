@@ -18,7 +18,7 @@ public class AverageHoursBalanceSoftRule extends SoftRule {
     @Override
     protected int innerCalculateScore(List<Employee> employees) {
         if (employees.size() == 0) {
-            return 0;
+            return PERFECT_SCORE;
         }
 
         float totalShiftHours = 0;

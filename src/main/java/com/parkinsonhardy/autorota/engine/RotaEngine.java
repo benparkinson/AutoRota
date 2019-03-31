@@ -1,6 +1,7 @@
 package com.parkinsonhardy.autorota.engine;
 
 import com.parkinsonhardy.autorota.exceptions.RotaException;
+import com.parkinsonhardy.autorota.helpers.ShiftCreator;
 import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import com.parkinsonhardy.autorota.rules.HolisticRule;
 import com.parkinsonhardy.autorota.rules.Rule;
@@ -50,21 +51,24 @@ public abstract class RotaEngine {
         this.holisticRules.add(rule);
     }
 
-    protected List<Shift> createShifts(DateTime from, DateTime to) throws RotaException {
+    protected List<Shift> createShifts(DateTime from, DateTime to, List<ShiftBlock> shiftBlocks) throws RotaException {
         List<Shift> allShifts = new ArrayList<>();
 
         for (DateTime dt = from.withTimeAtStartOfDay();
              dt.isBefore(to.withTimeAtStartOfDay().getMillis());
              dt = dt.plusDays(1)) {
             for (ShiftRequirement shiftRequirement : shiftRequirements) {
-                if (!shiftRequirement.shiftRequiredOnDay(DayOfWeek.of(dt.getDayOfWeek()))) {
+                DayOfWeek shiftDay = DayOfWeek.of(dt.getDayOfWeek());
+                if (!shiftRequirement.shiftRequiredOnDay(shiftDay)) {
                     continue;
                 }
 
                 ShiftDefinition shiftDefinition = shiftDefinitionsByType.get(shiftRequirement.getShiftType());
+
                 if (shiftDefinition == null) {
                     throw new RotaException(String.format("Could not find shift definition for shift type: %s", shiftRequirement.getShiftType()));
                 }
+
                 for (int i = 0; i < shiftRequirement.getMinEmployees(); i++) {
                     Shift shift = createShift(dt, shiftDefinition);
 
@@ -76,15 +80,7 @@ public abstract class RotaEngine {
     }
 
     protected Shift createShift(DateTime dt, ShiftDefinition shiftDefinition) {
-        DateTime endDate;
-        if (shiftDefinition.getEndTime().isBefore(shiftDefinition.getStartTime())) {
-            endDate = dt.plusDays(1);
-        } else {
-            endDate = dt;
-        }
-        return new Shift(shiftId++, shiftDefinition.getShiftType(),
-                dt.withTime(shiftDefinition.getStartTime()),
-                endDate.withTime(shiftDefinition.getEndTime()));
+        return ShiftCreator.createFromDefinition(shiftId++, dt, shiftDefinition);
     }
 
     public abstract void assignShifts(DateTime from, DateTime to) throws RotaException;

@@ -21,6 +21,7 @@ public class MaxConsecutiveShiftRuleTest extends RotaEngineTestBase {
         rotaEngine = super.getRotaEngine();
     }
 
+    //todo this test seems dodgy for some reason...
     @Test
     public void testNoTwoDaysInARowRule() throws RotaException {
         ShiftDefinition dayShift = new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("11:30"));
@@ -31,6 +32,7 @@ public class MaxConsecutiveShiftRuleTest extends RotaEngineTestBase {
         addShiftRequirementForEveryDay(rotaEngine, "Day", 1);
         addShiftRequirementForEveryDay(rotaEngine, "LaterDay", 1);
         rotaEngine.addRule(new MaxConsecutiveShiftRule("Day", 1));
+        rotaEngine.addRule(new MaxConsecutiveShiftRule("LaterDay", 1));
         DateTime today = DateTime.now().withTimeAtStartOfDay();
 
         rotaEngine.assignShifts(today, today.plusDays(2));

@@ -11,15 +11,25 @@ import java.util.List;
 public class ShiftBlocksSoftRule extends SoftRule {
 
     private final ShiftBlock preferredShiftBlock;
+    private final boolean mandatory;
 
     public ShiftBlocksSoftRule(int weight, ShiftBlock preferredShiftBlock) {
+        this(weight, preferredShiftBlock, false);
+    }
+
+    public ShiftBlocksSoftRule(int weight, ShiftBlock preferredShiftBlock, boolean mandatory) {
         super(weight);
 
         this.preferredShiftBlock = preferredShiftBlock;
+        this.mandatory= mandatory;
     }
 
     public ShiftBlock getPreferredShiftBlock() {
         return preferredShiftBlock;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     @Override
@@ -52,6 +62,10 @@ public class ShiftBlocksSoftRule extends SoftRule {
 
                 previousDay = currentlyInBlock ? startDay : null;
             }
+        }
+
+        if (totalPossibleBlocks == 0) {
+            return PERFECT_SCORE;
         }
 
         return Math.round((blocksFound / totalPossibleBlocks) * PERFECT_SCORE);

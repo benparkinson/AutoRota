@@ -1,29 +1,7 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import validateRotaForm from './validateRotaForm';
-
-const renderError = ({ error, touched }) => {
-    if (touched && error) {
-        return (
-            <div className="ui error message">
-                <div className="header">
-                    {error}
-                </div>
-            </div>
-        );
-    }
-}
-
-const renderInput = ({ input, label, meta, type }) => {
-    const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
-    return (
-        <div className={className}>
-            <label>{label}</label>
-            <input {...input} autoComplete="off" type={type} />
-            {renderError(meta)}
-        </div>
-    );
-}
+import { renderInput } from './formRender';
 
 const GeneralConfigFormPage = (props) => {
     return (

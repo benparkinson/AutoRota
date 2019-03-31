@@ -20,6 +20,24 @@ public class ShiftBlocksSoftRuleTest extends RotaEngineTestBase {
     private long employeeId = 0;
 
     @Test
+    public void testNoShiftsPerfectScore() {
+        Employee e = new Employee("Test");
+
+        List<DayOfWeek> daysForBlock = new ArrayList<>();
+        daysForBlock.add(FRIDAY);
+        daysForBlock.add(SATURDAY);
+        daysForBlock.add(SUNDAY);
+        ShiftBlock block = new ShiftBlock("Test", daysForBlock);
+        ShiftBlocksSoftRule rule = new ShiftBlocksSoftRule(1, block);
+
+        List<Employee> employees = new ArrayList<>();
+        employees.add(e);
+        int i = rule.innerCalculateScore(employees);
+
+        Assert.assertEquals(PERFECT_SCORE, i);
+    }
+
+    @Test
     public void testSimpleBlock() {
         Employee e = createEmployee(1, "Test", FRIDAY, SATURDAY, SUNDAY);
 
@@ -155,5 +173,4 @@ public class ShiftBlocksSoftRuleTest extends RotaEngineTestBase {
             employee.addShift(new Shift(shiftCount++, shiftType, date, date.plusHours(1)));
         }
     }
-
 }

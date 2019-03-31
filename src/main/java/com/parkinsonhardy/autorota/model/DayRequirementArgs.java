@@ -1,7 +1,5 @@
 package com.parkinsonhardy.autorota.model;
 
-import com.parkinsonhardy.autorota.engine.ShiftRequirement;
-
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashMap;

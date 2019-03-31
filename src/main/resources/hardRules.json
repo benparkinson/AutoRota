@@ -1,0 +1,81 @@
+[
+  {
+    "niceName": "",
+    "name": "",
+    "unique": false,
+    "params": []
+  },
+  {
+    "niceName": "Minimum Hours Between Shifts",
+    "name": "MinHoursBetweenShifts",
+    "unique": true,
+    "params": [
+      {
+        "name": "MinHours",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "niceName": "Maximum Average Hours Per Week",
+    "name": "MaxAverageHoursPerWeek",
+    "unique": true,
+    "params": [
+      {
+        "name": "MaxHours",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "niceName": "Maximum Consecutive Shifts",
+    "name": "MaxConsecutiveShifts",
+    "unique": false,
+    "params": [
+      {
+        "name": "ShiftName",
+        "type": "text"
+      },
+      {
+        "name": "MaxConsecutive",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "niceName": "Maximum Hours Per Week",
+    "name": "MaxHoursPerWeek",
+    "unique": true,
+    "params": [
+      {
+        "name": "MaxHours",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "niceName": "No More Than One Weekend In a Row",
+    "name": "NoMoreThanOneWeekendInARow",
+    "unique": true,
+    "params": []
+  },
+  {
+    "niceName": "Minimum Hours Break After Consecutive Shifts",
+    "name": "MinHoursBreakAfterConsecutiveShifts",
+    "unique": false,
+    "params": [
+      {
+        "name": "ShiftName",
+        "type": "text"
+      },
+      {
+        "name": "MaxConsecutive",
+        "type": "text"
+      },
+      {
+        "name": "MinHours",
+        "type": "number"
+      }
+    ]
+  }
+]
