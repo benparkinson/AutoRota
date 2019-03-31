@@ -29,7 +29,7 @@ public class NoMoreThanOneConsecutiveWeekendsRule implements Rule {
                 consecutiveWeekendShiftCount++;
 
             if (lastWeekendShiftChecked != null && moreThanOneWeekBetweenShifts(lastWeekendShiftChecked, shift))
-                consecutiveWeekendShiftCount = 0;
+                consecutiveWeekendShiftCount = 1;
 
             if (consecutiveWeekendShiftCount > ONE)
                 return false;
