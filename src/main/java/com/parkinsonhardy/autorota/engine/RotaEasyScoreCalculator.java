@@ -70,10 +70,6 @@ public class RotaEasyScoreCalculator implements EasyScoreCalculator<RotaSolution
             }
         }
 
-        if (hardScore == 0 && softScore == 0) {
-            int test = 0;
-        }
-
         return HardSoftScore.of(hardScore, softScore);
     }
 }

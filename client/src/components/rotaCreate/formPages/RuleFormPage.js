@@ -4,6 +4,49 @@ import { renderInput, renderError } from './formRender';
 
 class RuleFormPage extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    }
+
+    renderDayDropdown = ({ input, label, meta }) => {
+        const optionsRendered = this.days.map((x) =>
+            <option value={x}
+                key={x}>
+                {x}
+            </option>
+        );
+
+        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
+        return (
+            <div className={className}>
+                <label>{label}</label>
+                <select {...input} className="ui dropdown">
+                    {optionsRendered}
+                </select>
+                {renderError(meta)}
+            </div>
+        );
+    }
+
+    createDayRangeFields = (name, param, index) => {
+        console.log(`${name}.params[${index}].from`);
+        return (
+            <div className="field" key={param.name}>
+                <div className="two fields">
+                    <Field name={`${name}.params[${index}].from`}
+                        label="From"
+                        component={this.renderDayDropdown}
+                        type={param.type} />
+                    <Field name={`${name}.params[${index}].to`}
+                        label="To"
+                        component={this.renderDayDropdown}
+                        type={param.type} />
+                </div>
+            </div>
+        );
+    }
+
     renderShiftOptions = ({ input, label, meta }) => {
         if (!this.props.shiftTypes)
             return null;
@@ -19,7 +62,7 @@ class RuleFormPage extends React.Component {
         return (
             <div className={className}>
                 <label>{label}</label>
-                <select className="ui dropdown">
+                <select {...input} className="ui dropdown">
                     {optionsRendered}
                 </select>
                 {renderError(meta)}
@@ -36,6 +79,8 @@ class RuleFormPage extends React.Component {
             let component;
             if (param.type === "shift") {
                 component = this.renderShiftOptions;
+            } else if (param.type === "day_range") {
+                return this.createDayRangeFields(name, param, index + i);
             } else {
                 component = renderInput
             }

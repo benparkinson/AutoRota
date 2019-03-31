@@ -27,7 +27,7 @@
       },
       {
         "name": "DaysInBlock",
-        "type": "text"
+        "type": "day_range"
       },
       {
         "name": "Weight",

@@ -33,7 +33,17 @@ public class ShiftBlockTest {
         days.add(DayOfWeek.FRIDAY);
 
         ShiftBlock shiftBlock = new ShiftBlock("Test", days);
+    }
 
+    @Test
+    public void testShiftBlockCreationOverWeekend() {
+        List<DayOfWeek> days = new ArrayList<>();
+        days.add(DayOfWeek.FRIDAY);
+        days.add(DayOfWeek.SATURDAY);
+        days.add(DayOfWeek.SUNDAY);
+        days.add(DayOfWeek.MONDAY);
+
+        ShiftBlock shiftBlock = new ShiftBlock("Test", days);
     }
 
 }

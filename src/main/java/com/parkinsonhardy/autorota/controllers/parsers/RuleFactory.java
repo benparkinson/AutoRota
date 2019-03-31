@@ -43,13 +43,21 @@ public class RuleFactory {
             RuleParamArgs weight = getParamArgs(ruleArgs, "Weight");
             RuleParamArgs shiftName = getParamArgs(ruleArgs, "ShiftName");
             RuleParamArgs daysInBlock = getParamArgs(ruleArgs, "DaysInBlock");
-            RuleParamArgs force = getParamArgs(ruleArgs, "Force");
-            // todo this should be better than just comma separated obv
-            String[] days = daysInBlock.getInput().toUpperCase().split(",");
-            List<DayOfWeek> daysOfWeek = Arrays.stream(days).map(DayOfWeek::valueOf).collect(Collectors.toList());
-            boolean mandatory = Boolean.valueOf(force.getInput());
+            String fromDay = daysInBlock.getFrom().toUpperCase();
+            String toDay = daysInBlock.getTo().toUpperCase();
+            DayOfWeek from = DayOfWeek.valueOf(fromDay);
+            DayOfWeek to = DayOfWeek.valueOf(toDay);
+            List<DayOfWeek> daysOfWeek = new ArrayList<>();
+            DayOfWeek i = from;
+            while (i != to.plus(1)) {
+                daysOfWeek.add(i);
+                i = i.plus(1);
+            }
+
             // todo this should be clearer on the GUI, and maybe this
             // rule should be different if forced, need to consider options
+            RuleParamArgs force = getParamArgs(ruleArgs, "Force");
+            boolean mandatory = Boolean.valueOf(force.getInput());
             int weightValue;
             if (mandatory) {
                 weightValue = 0;

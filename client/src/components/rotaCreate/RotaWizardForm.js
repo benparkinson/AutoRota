@@ -35,8 +35,9 @@ const defaultFormValues = {
                 },
                 {
                     "name": "DaysInBlock",
-                    "type": "text",
-                    "input": "friday,saturday,sunday"
+                    "type": "day_range",
+                    "from": "Friday",
+                    "to": "Sunday"
                 },
                 {
                     "name": "Weight",
@@ -63,8 +64,9 @@ const defaultFormValues = {
                 },
                 {
                     "name": "DaysInBlock",
-                    "type": "text",
-                    "input": "monday,tuesday,wednesday,thursday"
+                    "type": "day_range",
+                    "from": "Monday",
+                    "to": "Thursday"
                 },
                 {
                     "name": "Weight",
@@ -91,8 +93,9 @@ const defaultFormValues = {
                 },
                 {
                     "name": "DaysInBlock",
-                    "type": "text",
-                    "input": "friday,saturday,sunday"
+                    "type": "day_range",
+                    "from": "Friday",
+                    "to": "Sunday"
                 },
                 {
                     "name": "Weight",

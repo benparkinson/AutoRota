@@ -25,16 +25,13 @@ public class ShiftBlock {
             throw new IllegalArgumentException("Shift blocks must be at least two days long");
         }
 
-        daysInBlock.sort(Comparator.comparingInt(DayOfWeek::getValue));
+        DayOfWeek previousDayOfWeek = daysInBlock.get(0);
+        for (int i = 1; i < daysInBlock.size(); i++) {
+            DayOfWeek dayOfWeek = daysInBlock.get(i);
+            if (previousDayOfWeek.plus(1) != dayOfWeek)
+                throw new IllegalArgumentException("Days in block must be contiguous!");
 
-        int i = -1;
-        for (DayOfWeek dayOfWeek : daysInBlock) {
-            if (i >= 0) {
-                if (Math.abs(dayOfWeek.getValue() - i) % 7 >= 2) {
-                    throw new IllegalArgumentException("Days in block must be contiguous!");
-                }
-            }
-            i = dayOfWeek.getValue();
+            previousDayOfWeek = dayOfWeek;
         }
     }
 
