@@ -24,7 +24,7 @@ class RotaList extends React.Component {
             return;
         }
 
-        if (this.props.rotas.find(rota => rota.status === STATUS_IN_PROGRESS)) {
+        if (this.props.rotas.some(rota => rota.status === STATUS_IN_PROGRESS)) {
             if (!this.interval) {
                 this.interval = setInterval(() =>
                     this.setState({
@@ -113,7 +113,9 @@ class RotaList extends React.Component {
             return this.renderListPlaceholder();
         }
 
-        return this.props.rotas.map(rota => {
+        const reversedRotas = this.props.rotas.slice(0).reverse();
+
+        return reversedRotas.map(rota => {
             const iconClassName = this.getIconClassName(rota.status);
             const description = this.renderDescription(rota);
             return (

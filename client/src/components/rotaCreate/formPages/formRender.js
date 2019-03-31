@@ -15,12 +15,16 @@ export const renderError = ({ error, touched }) => {
 // for some strange reason checkbox labels have to be after the input or 
 // else it won't toggle on click, probably some SemanticUI quirk.   
 const renderToggle = (input, label, meta) => {
-    const className = "field ui toggle checkbox";
+    const className = "ui field toggle checkbox";
     return (
-        <div className={className}>
-            <input {...input} type="checkbox" />
-            <label>{label}</label>
-            {renderError(meta)}
+        <div className="ui compact basic segment">
+            <div className="field">
+                <div className={className}>
+                    <input {...input} type="checkbox" />
+                    <label>{label}</label>
+                    {renderError(meta)}
+                </div>
+            </div>
         </div>
     );
 }

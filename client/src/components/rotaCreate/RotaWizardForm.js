@@ -340,7 +340,7 @@ const defaultFormValues = {
     "startDate": "2019-01-07",
     "endDate": "2019-04-01",
     "timeout": 300,
-    "name": "Super Rota"
+    "name": ""
 }
 
 const pageOrder = [

@@ -103,7 +103,7 @@ class RotaView extends React.Component {
         return (
             <div>
                 {this.renderAllRotasButton()}
-                <h4 className="ui header">Rota {this.props.rota.id}:</h4>
+                <h4 className="ui header">Rota "{this.props.rota.name}" (ID {this.props.rota.id}):</h4>
                 {this.renderContent()}
             </div>
         );

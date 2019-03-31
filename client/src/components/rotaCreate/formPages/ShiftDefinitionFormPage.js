@@ -79,5 +79,5 @@ export default reduxForm({
     form: 'rotaWizard',
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
-    validateRotaForm
+    validate: validateRotaForm
 })(ShiftDefinitionFormPage);

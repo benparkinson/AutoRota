@@ -8,17 +8,28 @@ class RuleFormPage extends React.Component {
             return null;
         }
 
-        const renderedParams = rule.params.map((param, index) => {
+        const createField = (param, index) => {
             return (
-                <Field name={`${name}.params[${index}].input`} label={param.name}
+                <Field name={`${name}.params[${index + i}].input`} label={param.name}
                     key={param.name}
                     component={renderInput}
                     type={param.type} />
             );
-        });
+        }
+
+        const renderedParams = [];
+        for (var i = 0; i < rule.params.length; i += 2) {
+            const subArray = rule.params.slice(i, i + 2);
+            const subParams = subArray.map(createField);
+            renderedParams.push((
+                <div className="two fields" key={i}>
+                    {subParams}
+                </div>
+            ));
+        }
 
         return (
-            <div className="ui field">
+            <div className="ui segment">
                 {renderedParams}
             </div>
         );

@@ -23,7 +23,7 @@ public class RotaEngineTestBase {
 
     protected void addTwoEmployees() throws RotaException {
         addSingleEmployee();
-        rotaEngine.addEmployee(new Employee("Shit Ben"));
+        rotaEngine.addEmployee(new Employee("Other Ben"));
     }
 
     protected void checkSingleEmployeeHasShiftCount(List<Employee> employees, int shiftCount) {

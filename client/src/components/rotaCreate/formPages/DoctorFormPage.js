@@ -3,6 +3,20 @@ import { Field, FieldArray, reduxForm } from 'redux-form';
 import validateRotaForm from './validateRotaForm';
 import { renderInput } from './formRender';
 
+const addNewDoctor = (doctors) => {
+    console.log(doctors.getAll());
+    const len = doctors.length % 26;
+    var doctorName = `Doctor ${String.fromCharCode(65 + len)}`;
+    var doctorCount = 1;
+    const findDoc = (doc) => {
+        return doc.name === doctorName;
+    }
+    while (doctors.getAll().find(findDoc)) {
+        doctorName = `Doctor ${String.fromCharCode(65 + len)} (${doctorCount++})`;
+    }
+    doctors.push({ name: doctorName })
+}
+
 const renderDoctors = ({ fields }) => {
     return (
         <div>
@@ -26,7 +40,7 @@ const renderDoctors = ({ fields }) => {
             }
 
             <div className="ui center aligned container">
-                <button className="ui field secondary button" type="button" onClick={() => fields.push({})}>
+                <button className="ui field secondary button" type="button" onClick={() => addNewDoctor(fields)}>
                     Add Doctor
                 </button>
             </div>
@@ -48,5 +62,5 @@ export default reduxForm({
     form: 'rotaWizard',
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
-    validateRotaForm
+    validate: validateRotaForm
 })(DoctorFormPage);

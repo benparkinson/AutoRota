@@ -28,6 +28,10 @@ const validateRotaForm = (values) => {
         }
     }
 
+    if (!values.name) {
+        validation.name = "Please enter a rota name";
+    }
+
     return validation;
 }
 
