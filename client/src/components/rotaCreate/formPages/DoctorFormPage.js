@@ -4,7 +4,6 @@ import validateRotaForm from './validateRotaForm';
 import { renderInput } from './formRender';
 
 const addNewDoctor = (doctors) => {
-    console.log(doctors.getAll());
     const len = doctors.length % 26;
     var doctorName = `Doctor ${String.fromCharCode(65 + len)}`;
     var doctorCount = 1;

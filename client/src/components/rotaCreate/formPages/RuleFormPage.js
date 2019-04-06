@@ -6,7 +6,7 @@ class RuleFormPage extends React.Component {
 
     constructor(props) {
         super(props);
-        this.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        this.days = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     }
 
     renderDayDropdown = ({ input, label, meta }) => {
@@ -17,7 +17,7 @@ class RuleFormPage extends React.Component {
             </option>
         );
 
-        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
+        const className = `field ${meta.error && meta.touched && !meta.active ? 'error' : ''}`;
         return (
             <div className={className}>
                 <label>{label}</label>
@@ -30,7 +30,6 @@ class RuleFormPage extends React.Component {
     }
 
     createDayRangeFields = (name, param, index) => {
-        console.log(`${name}.params[${index}].from`);
         return (
             <div className="field" key={param.name}>
                 <div className="two fields">
@@ -51,14 +50,17 @@ class RuleFormPage extends React.Component {
         if (!this.props.shiftTypes)
             return null;
 
-        const optionsRendered = this.props.shiftTypes.map((x) =>
+        const shiftTypesOptions = this.props.shiftTypes.slice(0);
+        shiftTypesOptions.unshift(""); // add empty option for dropdown
+
+        const optionsRendered = shiftTypesOptions.map((x) =>
             <option value={x}
                 key={x}>
                 {x}
             </option>
         );
 
-        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
+        const className = `field ${meta.error && meta.touched && !meta.active ? 'error' : ''}`;
         return (
             <div className={className}>
                 <label>{label}</label>
@@ -111,6 +113,18 @@ class RuleFormPage extends React.Component {
         );
     }
 
+    renderDropDownError = ({ error, touched, active }) => {
+        if (touched && (error && error.name) && !active) {
+            return (
+                <div className="ui error message">
+                    <div className="header">
+                        {error.name}
+                    </div>
+                </div>
+            );
+        }
+    }
+
     renderRuleSelect = ({ input, label, meta, options, ...rest }) => {
         if (!this.props.possibleRules)
             return null;
@@ -128,7 +142,7 @@ class RuleFormPage extends React.Component {
 
         const val = JSON.stringify(options.find(option => option.name === input.value.name))
 
-        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
+        const className = `field ${(meta.error && meta.error.name) && meta.touched && !meta.active ? 'error' : ''}`;
         return (
             <div className={className}>
                 <label>{label}</label>
@@ -141,7 +155,7 @@ class RuleFormPage extends React.Component {
                     {optionsRendered}
                 </select>
                 {this.renderRuleParams(input.name, input.value)}
-                {renderError(meta)}
+                {this.renderDropDownError(meta)}
             </div>
         );
     }

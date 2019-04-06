@@ -1,7 +1,7 @@
 import React from 'react'
 
-export const renderError = ({ error, touched }) => {
-    if (touched && error) {
+export const renderError = ({ error, touched, active }) => {
+    if (touched && error && !active) {
         return (
             <div className="ui error message">
                 <div className="header">
@@ -33,7 +33,7 @@ export const renderInput = ({ input, label, meta, type }) => {
     if (type === "checkbox") {
         return renderToggle(input, label, meta);
     }
-    const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
+    const className = `field ${meta.error && meta.touched && !meta.active ? 'error' : ''}`;
     return (
         <div className={className}>
             <label>{label}</label>
