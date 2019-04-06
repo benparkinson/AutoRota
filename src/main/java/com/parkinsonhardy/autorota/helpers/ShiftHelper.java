@@ -6,6 +6,8 @@ import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 import org.joda.time.Period;
 
+import java.time.DayOfWeek;
+
 public class ShiftHelper {
 
     // Only a static helper class, no need to construct
@@ -37,5 +39,15 @@ public class ShiftHelper {
 
         difference = new Duration(startTime, endTime);
         return difference.getStandardMinutes() / 60f;
+    }
+
+    public static boolean shiftIsOnWeekend(Shift shift) {
+        int startOfShiftDay = shift.getStartTime().getDayOfWeek();
+        int endOfShiftDay = shift.getEndTime().getDayOfWeek();
+
+        return startOfShiftDay == DayOfWeek.SATURDAY.getValue() ||
+                startOfShiftDay == DayOfWeek.SUNDAY.getValue() ||
+                endOfShiftDay == DayOfWeek.SATURDAY.getValue() ||
+                endOfShiftDay == DayOfWeek.SUNDAY.getValue();
     }
 }

@@ -10,10 +10,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.parkinsonhardy.autorota.helpers.ShiftHelper.shiftIsOnWeekend;
+
 public class RotaUtils {
 
-    private RotaUtils() {}
+    private RotaUtils() {
+    }
 
+    // this is now getting to too many loops through the same list
+    // ideally we would return actual objects that can be manipulated by the GUI as required rather than
+    // returning a big fat string, so that's the preferred solution rather than a more performant way of making
+    // a big fat string.
     public static String stringifyRota(List<Employee> employees, DateTime startDate, DateTime endDate) {
         Set<String> shiftTypes = new HashSet<>();
         StringBuilder sb = new StringBuilder();
@@ -57,6 +64,26 @@ public class RotaUtils {
             sb.append("\n");
         }
 
+        sb.append("Max # of Consecutive Shifts,");
+        prefix = "";
+        for (Employee employee : employees) {
+            sb.append(prefix);
+            prefix = ",";
+            int maxConsecutive = countConsecutiveShifts(employee);
+            sb.append(maxConsecutive);
+        }
+        sb.append("\n");
+
+        sb.append("# Weekends Worked,");
+        prefix = "";
+        for (Employee employee : employees) {
+            sb.append(prefix);
+            prefix = ",";
+            int weekendsWorked = countWeekendsWorked(employee);
+            sb.append(weekendsWorked);
+        }
+        sb.append("\n");
+
         sb.append("Total Hours,");
         prefix = "";
         for (Employee employee : employees) {
@@ -77,6 +104,45 @@ public class RotaUtils {
             sb.append(averageHours);
         }
         return sb.toString();
+    }
+
+    // assumes shifts are sorted...they should be at this point
+    private static int countConsecutiveShifts(Employee employee) {
+        int maxConsecutive = 0;
+        int currentConsecutive = 0;
+        DateTime previousShiftStartTime = null;
+        for (Shift shift : employee.getShifts()) {
+            if (previousShiftStartTime == null) {
+                previousShiftStartTime = shift.getStartTime().withTimeAtStartOfDay();
+                currentConsecutive = 1;
+                continue;
+            }
+
+            if (shift.getStartTime().withTimeAtStartOfDay().minusDays(1).equals(previousShiftStartTime)) {
+                currentConsecutive++;
+            } else {
+                if (currentConsecutive > maxConsecutive) {
+                    maxConsecutive = currentConsecutive;
+                }
+                currentConsecutive = 1;
+            }
+
+            previousShiftStartTime = shift.getStartTime().withTimeAtStartOfDay();
+        }
+
+        return maxConsecutive;
+    }
+
+    private static int countWeekendsWorked(Employee employee) {
+        Set<Integer> weeks = new HashSet<>();
+
+        for (Shift shift : employee.getShifts()) {
+            if (shiftIsOnWeekend(shift)) {
+                weeks.add(shift.getStartTime().getWeekOfWeekyear());
+            }
+        }
+
+        return weeks.size();
     }
 
     private static int countHours(Employee employee) {

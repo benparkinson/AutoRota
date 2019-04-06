@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.parkinsonhardy.autorota.helpers.ShiftHelper.shiftIsOnWeekend;
+
 public class NoMoreThanOneConsecutiveWeekendsRule implements Rule {
 
     private static final int ONE = 1;
@@ -42,16 +44,6 @@ public class NoMoreThanOneConsecutiveWeekendsRule implements Rule {
     private boolean moreThanOneWeekBetweenShifts(Shift lastShiftChecked, Shift shift) {
         Duration duration = new Duration(lastShiftChecked.getStartTime(), shift.getStartTime());
         return duration.getStandardDays() > 7;
-    }
-
-    private boolean shiftIsOnWeekend(Shift shift) {
-        int startOfShiftDay = shift.getStartTime().getDayOfWeek();
-        int endOfShiftDay = shift.getEndTime().getDayOfWeek();
-
-        return startOfShiftDay == DayOfWeek.SATURDAY.getValue() ||
-                startOfShiftDay == DayOfWeek.SUNDAY.getValue() ||
-                endOfShiftDay == DayOfWeek.SATURDAY.getValue() ||
-                endOfShiftDay == DayOfWeek.SUNDAY.getValue();
     }
 
     @Override

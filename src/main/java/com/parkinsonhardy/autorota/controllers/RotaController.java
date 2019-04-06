@@ -104,8 +104,9 @@ public class RotaController {
                         rotaRepository.save(submitted);
                     } catch (RotaException e) {
                         String error = "Error, could not create rota";
-                        logger.error(error);
+                        logger.error(error, e);
                         submitted.setStatus("Error");
+                        submitted.setErrorMessage(e.getMessage());
                         rotaRepository.save(submitted);
                     }
                 }

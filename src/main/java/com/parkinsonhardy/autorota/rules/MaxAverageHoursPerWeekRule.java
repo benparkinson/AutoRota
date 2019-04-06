@@ -76,4 +76,11 @@ public class MaxAverageHoursPerWeekRule implements HolisticRule {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "MaxAverageHoursPerWeekRule{" +
+                "max=" + maxAverageHours +
+                '}';
+    }
 }

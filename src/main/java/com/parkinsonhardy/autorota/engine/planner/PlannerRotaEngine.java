@@ -6,6 +6,7 @@ import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.rules.OnlyOneShiftADayRule;
 import com.parkinsonhardy.autorota.rules.ShiftBlocksSoftRule;
 import org.joda.time.DateTime;
+import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
@@ -137,7 +138,17 @@ public class PlannerRotaEngine extends RotaEngine {
         if (!solve.getScore().isFeasible()) {
             throw new RotaException("No feasible solution found within time constraints!");
         }
+
+        doubleCheckRota(solve);
+
         return solve;
+    }
+
+    private void doubleCheckRota(RotaSolution solve) throws RotaException {
+        HardSoftScore score = (HardSoftScore) new RotaEasyScoreCalculator().calculateScore(solve);
+        if (!score.isFeasible()) {
+            throw new RotaException("No feasible solution found within time constraints!");
+        }
     }
 
     protected SolverFactory<RotaSolution> createSolverFactory() {

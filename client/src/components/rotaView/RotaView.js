@@ -26,8 +26,11 @@ class RotaView extends React.Component {
         if (status === STATUS_ERROR) {
             return (
                 <div className="ui tertiary inverted red segment">
-                    <i className="warning icon"></i>
-                    Oh no...something went wrong with your rota...sorry!
+                    <div>
+                        <i className="warning icon"></i>
+                        Oh no...something went wrong with your rota...sorry!
+                    </div>
+                    <div>{this.props.rota.errorMessage}</div>
                 </div>
             );
         }
