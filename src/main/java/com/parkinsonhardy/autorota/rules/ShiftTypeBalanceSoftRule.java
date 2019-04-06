@@ -24,17 +24,15 @@ public class ShiftTypeBalanceSoftRule extends SoftRule {
         Map<String, List<Float>> shiftCounts = new HashMap<>();
         Map<String, Float> totalShiftCountByType = new HashMap<>();
         for (Employee employee : employees) {
-            Map<String, Float> shiftCountByType = new HashMap<>();
-            for (String shiftType : allShiftTypes) {
-                shiftCountByType.put(shiftType, 0.0f);
-            }
+            Map<String, Float> shiftCountByType = initialiseEmptyShiftCountMap();
+
             for (Shift shift : employee.getShifts()) {
                 String shiftType = shift.getShiftType();
-                Float aDouble = totalShiftCountByType.get(shiftType);
-                if (aDouble == null) {
-                    aDouble = 0.0f;
+                Float currentShiftCount = totalShiftCountByType.get(shiftType);
+                if (currentShiftCount == null) {
+                    currentShiftCount = 0.0f;
                 }
-                totalShiftCountByType.put(shiftType, ++aDouble);
+                totalShiftCountByType.put(shiftType, ++currentShiftCount);
 
                 Float count = shiftCountByType.get(shiftType);
                 if (count == null) {
@@ -48,6 +46,18 @@ public class ShiftTypeBalanceSoftRule extends SoftRule {
             }
         }
 
+        return calculateFinalScore(employees, shiftCounts, totalShiftCountByType);
+    }
+
+    private Map<String, Float> initialiseEmptyShiftCountMap() {
+        Map<String, Float> shiftCountByType = new HashMap<>();
+        for (String shiftType : allShiftTypes) {
+            shiftCountByType.put(shiftType, 0.0f);
+        }
+        return shiftCountByType;
+    }
+
+    private int calculateFinalScore(List<Employee> employees, Map<String, List<Float>> shiftCounts, Map<String, Float> totalShiftCountByType) {
         float penalty = PERFECT_SCORE / (float) employees.size();
         int score = PERFECT_SCORE;
 
@@ -60,8 +70,6 @@ public class ShiftTypeBalanceSoftRule extends SoftRule {
                 score -= (penalty * miss);
             }
         }
-
-
         return score;
     }
 

@@ -1,5 +1,6 @@
 package com.parkinsonhardy.autorota.engine;
 
+import com.parkinsonhardy.autorota.engine.planner.PlannerRotaEngine;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
 

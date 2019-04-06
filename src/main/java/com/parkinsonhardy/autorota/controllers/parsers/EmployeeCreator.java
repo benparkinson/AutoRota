@@ -8,5 +8,4 @@ public class EmployeeCreator {
     public Employee create(DoctorArgs args) {
         return new Employee(args.getName());
     }
-
 }

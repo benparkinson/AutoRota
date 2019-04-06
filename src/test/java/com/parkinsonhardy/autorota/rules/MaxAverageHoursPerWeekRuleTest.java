@@ -6,6 +6,7 @@ import com.parkinsonhardy.autorota.exceptions.RotaException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MaxAverageHoursPerWeekRuleTest extends RotaEngineTestBase {
@@ -53,6 +54,7 @@ public class MaxAverageHoursPerWeekRuleTest extends RotaEngineTestBase {
     }
 
     @Test
+    @Ignore     // This used to be the RotaEngine's job but should be in a test for average hours balance rule
     public void testMaxAverageHoursPerWeekFinalCheckSplitsShifts() throws RotaException {
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("10:30"), LocalTime.parse("15:30")));
         addTwoEmployees();
@@ -66,6 +68,7 @@ public class MaxAverageHoursPerWeekRuleTest extends RotaEngineTestBase {
     }
 
     @Test
+    @Ignore     // This used to be the RotaEngine's job but should be in a test for average hours balance rule
     public void testMaxAverageHoursPerWeekFinalCheckSplitsShifts2() throws RotaException {
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("11:30"), LocalTime.parse("15:30")));
         addTwoEmployees();
@@ -79,6 +82,7 @@ public class MaxAverageHoursPerWeekRuleTest extends RotaEngineTestBase {
     }
 
     @Test
+    @Ignore     // This used to be the RotaEngine's job but should be in a test for average hours balance rule
     public void testMaxAverageHoursPerWeekFinalCheckSplitsShifts3() throws RotaException {
         rotaEngine.addShiftDefinition(new ShiftDefinition("Day", LocalTime.parse("11:30"), LocalTime.parse("15:30")));
         addTwoEmployees();

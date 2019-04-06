@@ -1,5 +1,6 @@
 package com.parkinsonhardy.autorota.engine;
 
+import com.parkinsonhardy.autorota.engine.planner.ShiftGroupDifficultyWeightFactory;
 import org.joda.time.DateTime;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;

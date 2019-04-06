@@ -6,13 +6,16 @@ import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RotaUtils {
 
     private RotaUtils() {}
 
     public static String stringifyRota(List<Employee> employees, DateTime startDate, DateTime endDate) {
+        Set<String> shiftTypes = new HashSet<>();
         StringBuilder sb = new StringBuilder();
         sb.append(",");
         String prefix = "";
@@ -32,6 +35,7 @@ public class RotaUtils {
                 sb.append(prefix);
                 prefix = ",";
                 for (Shift shift : employee.getShifts()) {
+                    shiftTypes.add(shift.getShiftType());
                     if (shift.getStartTime().withTimeAtStartOfDay().equals(dt)) {
                         sb.append(shift.getShiftType());
                         break;
@@ -41,35 +45,17 @@ public class RotaUtils {
             sb.append("\n");
         }
 
-        sb.append("Number of Days,");
-        prefix = "";
-        for (Employee employee : employees) {
-            int numberOfDays = countShifts(employee, "Day");
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(numberOfDays);
+        for (String shiftType : shiftTypes) {
+            sb.append(String.format("Number of %s shifts,", shiftType));
+            prefix = "";
+            for (Employee employee : employees) {
+                int shiftCount = countShifts(employee, shiftType);
+                sb.append(prefix);
+                prefix = ",";
+                sb.append(shiftCount);
+            }
+            sb.append("\n");
         }
-        sb.append("\n");
-
-        sb.append("Number of LongDays,");
-        prefix = "";
-        for (Employee employee : employees) {
-            int numberOfDays = countShifts(employee, "LongDay");
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(numberOfDays);
-        }
-        sb.append("\n");
-
-        sb.append("Number of Nights,");
-        prefix = "";
-        for (Employee employee : employees) {
-            int numberOfDays = countShifts(employee, "Night");
-            sb.append(prefix);
-            prefix = ",";
-            sb.append(numberOfDays);
-        }
-        sb.append("\n");
 
         sb.append("Total Hours,");
         prefix = "";
@@ -90,7 +76,6 @@ public class RotaUtils {
             prefix = ",";
             sb.append(averageHours);
         }
-        sb.append("\n\n");
         return sb.toString();
     }
 

@@ -5,7 +5,7 @@
     </scanAnnotatedClasses>
 
     <scoreDirectorFactory>
-        <easyScoreCalculatorClass>com.parkinsonhardy.autorota.engine.RotaEasyScoreCalculator</easyScoreCalculatorClass>
+        <easyScoreCalculatorClass>com.parkinsonhardy.autorota.engine.planner.RotaEasyScoreCalculator</easyScoreCalculatorClass>
     </scoreDirectorFactory>
 
     <termination>

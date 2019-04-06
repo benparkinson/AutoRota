@@ -25,6 +25,10 @@ public class ShiftBlock {
             throw new IllegalArgumentException("Shift blocks must be at least two days long");
         }
 
+        if (daysInBlock.size() == 7) {
+            throw new IllegalArgumentException("Shift blocks for every day not yet supported!");
+        }
+
         DayOfWeek previousDayOfWeek = daysInBlock.get(0);
         for (int i = 1; i < daysInBlock.size(); i++) {
             DayOfWeek dayOfWeek = daysInBlock.get(i);

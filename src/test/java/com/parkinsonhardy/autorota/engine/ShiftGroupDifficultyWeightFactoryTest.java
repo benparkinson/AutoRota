@@ -1,5 +1,7 @@
 package com.parkinsonhardy.autorota.engine;
 
+import com.parkinsonhardy.autorota.engine.planner.ShiftDifficultyWeight;
+import com.parkinsonhardy.autorota.engine.planner.ShiftGroupDifficultyWeightFactory;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;

@@ -2,7 +2,6 @@ package com.parkinsonhardy.autorota.engine;
 
 import com.parkinsonhardy.autorota.exceptions.RotaException;
 import com.parkinsonhardy.autorota.helpers.ShiftCreator;
-import com.parkinsonhardy.autorota.helpers.ShiftHelper;
 import com.parkinsonhardy.autorota.rules.HolisticRule;
 import com.parkinsonhardy.autorota.rules.Rule;
 import com.parkinsonhardy.autorota.rules.SoftRule;
@@ -11,15 +10,15 @@ import org.joda.time.DateTime;
 import java.time.DayOfWeek;
 import java.util.*;
 
-// First version of RotaEngine, keeping around for posterity but will remove and replace with Planner one once finalised
+// First version of RotaEngine, keeping around for posterity but will remove and replace with Planner impl once finalised
 public abstract class RotaEngine {
 
-    protected List<ShiftRequirement> shiftRequirements = new ArrayList<>();
+    private List<ShiftRequirement> shiftRequirements = new ArrayList<>();
+    private Map<String, ShiftDefinition> shiftDefinitionsByType = new HashMap<>();
+    private List<HolisticRule> holisticRules = new ArrayList<>();
     protected List<Employee> employees = new ArrayList<>();
-    protected Map<String, ShiftDefinition> shiftDefinitionsByType = new HashMap<>();
     protected List<Rule> rules = new ArrayList<>();
     protected List<SoftRule> softRules = new ArrayList<>();
-    protected List<HolisticRule> holisticRules = new ArrayList<>();
     protected int timeoutInSeconds;
 
     private int shiftId = 0;
@@ -51,7 +50,7 @@ public abstract class RotaEngine {
         this.holisticRules.add(rule);
     }
 
-    protected List<Shift> createShifts(DateTime from, DateTime to, List<ShiftBlock> shiftBlocks) throws RotaException {
+    protected List<Shift> createShifts(DateTime from, DateTime to) throws RotaException {
         List<Shift> allShifts = new ArrayList<>();
 
         for (DateTime dt = from.withTimeAtStartOfDay();

@@ -2,6 +2,7 @@ package com.parkinsonhardy.autorota.controllers.parsers;
 
 import com.parkinsonhardy.autorota.engine.RotaEngine;
 import com.parkinsonhardy.autorota.engine.ShiftBlock;
+import com.parkinsonhardy.autorota.exceptions.RuleCreationException;
 import com.parkinsonhardy.autorota.helpers.IntegerMatcher;
 import com.parkinsonhardy.autorota.model.RuleArgs;
 import com.parkinsonhardy.autorota.model.RuleParamArgs;
@@ -25,22 +26,22 @@ public class RuleFactory {
 
     private void setUpCreators() {
         holisticRuleCreators.put(RuleType.MaxAverageHoursPerWeek, ruleArgs -> {
-            RuleParamArgs maxHours = getParamArgs(ruleArgs, "MaxHours");
-            return new MaxAverageHoursPerWeekRule(Integer.parseInt(maxHours.getInput()));
+            String maxHours = getParameter(ruleArgs, "MaxHours", RuleType.MaxAverageHoursPerWeek);
+            return new MaxAverageHoursPerWeekRule(Integer.parseInt(maxHours));
         });
 
         softRuleCreators.put(RuleType.AverageHoursBalance, ruleArgs -> {
-            RuleParamArgs weight = getParamArgs(ruleArgs, "Weight");
-            return new AverageHoursBalanceSoftRule(Integer.parseInt(weight.getInput()));
+            String weight = getParameter(ruleArgs, "Weight", RuleType.AverageHoursBalance);
+            return new AverageHoursBalanceSoftRule(Integer.parseInt(weight));
         });
 
         softRuleCreators.put(RuleType.ShiftTypeBalance, ruleArgs -> {
-            RuleParamArgs weight = getParamArgs(ruleArgs, "Weight");
-            return new ShiftTypeBalanceSoftRule(Integer.parseInt(weight.getInput()), allShiftTypes);
+            String input = getParameter(ruleArgs, "Weight", RuleType.ShiftTypeBalance);
+            return new ShiftTypeBalanceSoftRule(Integer.parseInt(input), allShiftTypes);
         });
 
         softRuleCreators.put(RuleType.ShiftBlocks, ruleArgs -> {
-            RuleParamArgs weight = getParamArgs(ruleArgs, "Weight");
+            String weight = getParameter(ruleArgs, "Weight", RuleType.ShiftBlocks);
             RuleParamArgs shiftName = getParamArgs(ruleArgs, "ShiftName");
             RuleParamArgs daysInBlock = getParamArgs(ruleArgs, "DaysInBlock");
             String fromDay = daysInBlock.getFrom().toUpperCase();
@@ -54,71 +55,83 @@ public class RuleFactory {
                 i = i.plus(1);
             }
 
-            // todo this should be clearer on the GUI, and maybe this
-            // rule should be different if forced, need to consider options
+            // todo rule could be a different class if forced (since it's no longer a soft rule...), need to consider options
             RuleParamArgs force = getParamArgs(ruleArgs, "Force");
             boolean mandatory = Boolean.valueOf(force.getInput());
             int weightValue;
+            // bit of a hack to set weight to 0 in this case...
             if (mandatory) {
                 weightValue = 0;
             } else {
-                weightValue = Integer.parseInt(weight.getInput());
+                weightValue = Integer.parseInt(weight);
             }
             return new ShiftBlocksSoftRule(weightValue,
                     new ShiftBlock(shiftName.getInput(), daysOfWeek), mandatory);
         });
 
         softRuleCreators.put(RuleType.AvoidSingleShifts, ruleArgs -> {
-            RuleParamArgs weight = getParamArgs(ruleArgs, "Weight");
-            return new AvoidSingleShiftsSoftRule(Integer.parseInt(weight.getInput()));
+            String weight = getParameter(ruleArgs, "Weight", RuleType.AvoidSingleShifts);
+            return new AvoidSingleShiftsSoftRule(Integer.parseInt(weight));
         });
 
         ruleCreators.put(RuleType.MinHoursBetweenShifts, ruleArgs -> {
-            RuleParamArgs minHours = getParamArgs(ruleArgs, "MinHours");
-            return new MinHoursBetweenShiftsRule(Integer.parseInt(minHours.getInput()));
+            String minHours = getParameter(ruleArgs, "MinHours", RuleType.MinHoursBetweenShifts);
+            return new MinHoursBetweenShiftsRule(Integer.parseInt(minHours));
         });
 
         ruleCreators.put(RuleType.MaxConsecutiveShifts, ruleArgs -> {
-            RuleParamArgs maxConsecutive = getParamArgs(ruleArgs, "MaxConsecutive");
-            RuleParamArgs shiftName = getParamArgs(ruleArgs, "ShiftName");
+            String maxConsecutive = getParameter(ruleArgs, "MaxConsecutive", RuleType.MaxConsecutiveShifts);
+            String shiftName = getParameter(ruleArgs, "ShiftName", RuleType.MaxConsecutiveShifts);
 
-            return new MaxConsecutiveShiftRule(shiftName.getInput(), Integer.parseInt(maxConsecutive.getInput()));
+            return new MaxConsecutiveShiftRule(shiftName, Integer.parseInt(maxConsecutive));
         });
 
         ruleCreators.put(RuleType.MaxHoursPerWeek, ruleArgs -> {
-            RuleParamArgs maxHours = getParamArgs(ruleArgs, "MaxHours");
-            return new MaxHoursPerWeekRule(Integer.parseInt(maxHours.getInput()));
+            String maxHours = getParameter(ruleArgs, "MaxHours", RuleType.MaxHoursPerWeek);
+            return new MaxHoursPerWeekRule(Integer.parseInt(maxHours));
         });
 
         ruleCreators.put(RuleType.NoMoreThanOneWeekendInARow, ruleArgs -> new NoMoreThanOneConsecutiveWeekendsRule());
 
         ruleCreators.put(RuleType.MinHoursBreakAfterConsecutiveShifts, ruleArgs -> {
-            RuleParamArgs maxConsecutive = getParamArgs(ruleArgs, "MaxConsecutive");
-            RuleParamArgs shiftName = getParamArgs(ruleArgs, "ShiftName");
-            RuleParamArgs minHours = getParamArgs(ruleArgs, "MinHours");
+            String maxConsecutive = getParameter(ruleArgs, "MaxConsecutive", RuleType.MinHoursBreakAfterConsecutiveShifts);
+            String shiftName = getParameter(ruleArgs, "ShiftName", RuleType.MinHoursBreakAfterConsecutiveShifts);
+            String minHours = getParameter(ruleArgs, "MinHours", RuleType.MinHoursBreakAfterConsecutiveShifts);
 
-            String[] consecutiveArray = maxConsecutive.getInput().split(",");
+            // todo obviously should be more clear on GUI that multiple values are necessary
+            String[] consecutiveArray = maxConsecutive.split(",");
             int[] maxConsecutiveShifts = new int[consecutiveArray.length];
             List<Integer> collect = Arrays.stream(consecutiveArray).map(Integer::parseInt).collect(Collectors.toList());
             for (int i = 0; i < collect.size(); i++) {
                 maxConsecutiveShifts[i] = collect.get(i);
             }
 
-            return new MinHoursAfterConsecutiveShiftsRule(shiftName.getInput(), new IntegerMatcher(maxConsecutiveShifts), Integer.parseInt(minHours.getInput()));
+            return new MinHoursAfterConsecutiveShiftsRule(shiftName, new IntegerMatcher(maxConsecutiveShifts), Integer.parseInt(minHours));
         });
     }
 
-    // todo should be in a map by the time it comes out the JSON
-    private RuleParamArgs getParamArgs(RuleArgs ruleArgs, String paramName) {
+    private String getParameter(RuleArgs ruleArgs, String paramName, RuleType ruleType) throws RuleCreationException {
+        RuleParamArgs weight = getParamArgs(ruleArgs, paramName);
+        String input = weight.getInput();
+        if (input == null) {
+            throw new RuleCreationException(String.format("No input provided for parameter: [%s] for rule: [%s]", paramName, ruleType.name()));
+        }
+        return input;
+    }
+
+    // todo should be converted to a map by the time it comes out the JSON
+    private RuleParamArgs getParamArgs(RuleArgs ruleArgs, String paramName) throws RuleCreationException {
         for (RuleParamArgs args : ruleArgs.getParams()) {
             if (paramName.equals(args.getName())) {
                 return args;
             }
         }
-        return null;
+
+        throw new RuleCreationException(String.format("Could not find expected parameter: [%s] in rule arg: [%s]",
+                paramName, ruleArgs.toString()));
     }
 
-    public void addRule(RotaEngine rotaEngine, RuleArgs ruleArgs) {
+    public void addRule(RotaEngine rotaEngine, RuleArgs ruleArgs) throws RuleCreationException {
         RuleType ruleType = RuleType.valueOf(ruleArgs.getName());
 
         if (ruleType.isHolistic()) {
@@ -133,15 +146,15 @@ public class RuleFactory {
         }
     }
 
-    private HolisticRule createHolisticRule(RuleType ruleType, RuleArgs ruleArgs) {
+    private HolisticRule createHolisticRule(RuleType ruleType, RuleArgs ruleArgs) throws RuleCreationException {
         return holisticRuleCreators.get(ruleType).create(ruleArgs);
     }
 
-    private Rule createRule(RuleType ruleType, RuleArgs ruleArgs) {
+    private Rule createRule(RuleType ruleType, RuleArgs ruleArgs) throws RuleCreationException {
         return ruleCreators.get(ruleType).create(ruleArgs);
     }
 
-    private SoftRule createSoftRule(RuleType ruleType, RuleArgs ruleArgs) {
+    private SoftRule createSoftRule(RuleType ruleType, RuleArgs ruleArgs) throws RuleCreationException {
         return softRuleCreators.get(ruleType).create(ruleArgs);
     }
 }

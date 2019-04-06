@@ -1,4 +1,4 @@
-package com.parkinsonhardy.autorota.engine;
+package com.parkinsonhardy.autorota.engine.planner;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 

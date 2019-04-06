@@ -1,5 +1,8 @@
-package com.parkinsonhardy.autorota.engine;
+package com.parkinsonhardy.autorota.engine.planner;
 
+import com.parkinsonhardy.autorota.engine.Employee;
+import com.parkinsonhardy.autorota.engine.RotaSolution;
+import com.parkinsonhardy.autorota.engine.Shift;
 import com.parkinsonhardy.autorota.rules.Rule;
 import com.parkinsonhardy.autorota.rules.SoftRule;
 import org.optaplanner.core.api.score.Score;
@@ -17,6 +20,7 @@ public class RotaEasyScoreCalculator implements EasyScoreCalculator<RotaSolution
     private List<Rule> rules;
     private List<SoftRule> softRules;
 
+    // determines the quality of a created rota
     @Override
     public Score calculateScore(RotaSolution rotaSolution) {
         if (rules == null) {
@@ -73,3 +77,5 @@ public class RotaEasyScoreCalculator implements EasyScoreCalculator<RotaSolution
         return HardSoftScore.of(hardScore, softScore);
     }
 }
+
+

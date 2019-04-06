@@ -1,9 +1,6 @@
 package com.parkinsonhardy.autorota.engine;
 
 import org.joda.time.DateTime;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
-import org.optaplanner.core.api.domain.variable.PlanningVariableGraphType;
 
 import java.util.Objects;
 

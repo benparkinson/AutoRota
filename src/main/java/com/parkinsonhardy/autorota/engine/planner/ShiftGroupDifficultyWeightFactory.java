@@ -1,6 +1,11 @@
-package com.parkinsonhardy.autorota.engine;
+package com.parkinsonhardy.autorota.engine.planner;
 
 import com.parkinsonhardy.autorota.controllers.parsers.RuleType;
+import com.parkinsonhardy.autorota.engine.RotaSolution;
+import com.parkinsonhardy.autorota.engine.Shift;
+import com.parkinsonhardy.autorota.engine.ShiftBlock;
+import com.parkinsonhardy.autorota.engine.ShiftGroup;
+import com.parkinsonhardy.autorota.engine.planner.ShiftDifficultyWeight;
 import com.parkinsonhardy.autorota.rules.ShiftBlocksSoftRule;
 import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionSorterWeightFactory;
 

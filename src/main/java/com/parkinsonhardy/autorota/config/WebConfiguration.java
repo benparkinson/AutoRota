@@ -9,8 +9,8 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
-    // forces all requests apart from those starting with /api to return index.html so react can figure out
-    // where to send the user
+    // forces all requests apart from those starting with /api to return index.html so React can figure out
+    // where to send the user and we don't rerequest the page from the server every time
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
