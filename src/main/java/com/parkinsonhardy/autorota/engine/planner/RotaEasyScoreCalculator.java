@@ -3,6 +3,7 @@ package com.parkinsonhardy.autorota.engine.planner;
 import com.parkinsonhardy.autorota.engine.Employee;
 import com.parkinsonhardy.autorota.engine.RotaSolution;
 import com.parkinsonhardy.autorota.engine.Shift;
+import com.parkinsonhardy.autorota.engine.ShiftGroup;
 import com.parkinsonhardy.autorota.rules.Rule;
 import com.parkinsonhardy.autorota.rules.SoftRule;
 import org.optaplanner.core.api.score.Score;
@@ -31,19 +32,18 @@ public class RotaEasyScoreCalculator implements EasyScoreCalculator<RotaSolution
         int hardScore = 0;
         int softScore = 0;
 
-        List<Shift> shifts = rotaSolution.getShiftGroups().stream()
-                .flatMap(group -> group.getUnderlyingShifts().stream())
-                .collect(Collectors.toList());
+        List<ShiftGroup> shiftGroups = rotaSolution.getShiftGroups();
+
         Map<Employee, List<Shift>> shiftsByEmployee = new HashMap<>();
 
         for (Employee employee : rotaSolution.getEmployees()) {
             shiftsByEmployee.put(employee, new ArrayList<>());
         }
 
-        for (Shift shift : shifts) {
-            if (shift.getEmployee() != null) {
-                List<Shift> shiftsForEmployee = shiftsByEmployee.get(shift.getEmployee());
-                shiftsForEmployee.add(shift);
+        for (ShiftGroup shiftGroup : shiftGroups) {
+            if (shiftGroup.getEmployee() != null) {
+                List<Shift> shiftsForEmployee = shiftsByEmployee.get(shiftGroup.getEmployee());
+                shiftsForEmployee.addAll(shiftGroup.getUnderlyingShifts());
             }
         }
 

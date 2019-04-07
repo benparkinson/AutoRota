@@ -3,6 +3,7 @@ package com.parkinsonhardy.autorota.engine;
 import java.time.DayOfWeek;
 import java.util.*;
 
+// an abstract representation of the requirement for a shifttype to be assigned as a block
 public class ShiftBlock {
 
     private final String shiftType;

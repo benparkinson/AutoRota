@@ -161,15 +161,13 @@ public class PlannerRotaEngine extends RotaEngine {
     // this is mostly to rearrange the shifts/employees so older code can read it...
     // should instead hook in to the rota creation algo and set these fields every time
     private void assignShiftsToEmployees(RotaSolution solve) {
-        List<Shift> assignedShifts = solve.getShiftGroups().stream()
-                .flatMap(group -> group.getUnderlyingShifts().stream())
-                .collect(Collectors.toList());
+        List<ShiftGroup> shiftGroups = solve.getShiftGroups();
         Map<Employee, List<Shift>> shiftsByEmployee = new HashMap<>();
 
-        for (Shift shift : assignedShifts) {
-            if (shift.getEmployee() != null) {
-                List<Shift> shiftsForEmployee = shiftsByEmployee.computeIfAbsent(shift.getEmployee(), k -> new ArrayList<>());
-                shiftsForEmployee.add(shift);
+        for (ShiftGroup shiftGroup : shiftGroups) {
+            if (shiftGroup.getEmployee() != null) {
+                List<Shift> shiftsForEmployee = shiftsByEmployee.computeIfAbsent(shiftGroup.getEmployee(), k -> new ArrayList<>());
+                shiftsForEmployee.addAll(shiftGroup.getUnderlyingShifts());
             }
         }
 

@@ -47,7 +47,7 @@ const defaultFormValues = {
                 {
                     "name": "Force",
                     "type": "checkbox",
-                    "tooltip": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
+                    "description": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
                     "input": true
                 }
             ]
@@ -76,7 +76,7 @@ const defaultFormValues = {
                 {
                     "name": "Force",
                     "type": "checkbox",
-                    "tooltip": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
+                    "description": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
                     "input": true
                 }
             ]
@@ -105,7 +105,7 @@ const defaultFormValues = {
                 {
                     "name": "Force",
                     "type": "checkbox",
-                    "tooltip": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
+                    "description": "Force this block to be assigned every time (warning, too many forced shift blocks can be tricky to work out!)",
                     "input": false
                 }
             ]

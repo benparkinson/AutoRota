@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// a set of 1 or more shifts that are assigned together
 @PlanningEntity(difficultyWeightFactoryClass = ShiftGroupDifficultyWeightFactory.class)
 public class ShiftGroup implements Comparable<ShiftGroup> {
 
@@ -55,9 +56,6 @@ public class ShiftGroup implements Comparable<ShiftGroup> {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
-        for (Shift shift : underlyingShifts) {
-            shift.setEmployee(employee);
-        }
     }
 
     @PlanningVariable(valueRangeProviderRefs = {"employees"})

@@ -10,7 +10,6 @@ public class Shift implements Comparable<Shift> {
     private String shiftType;
     private DateTime startTime;
     private DateTime endTime;
-    private Employee employee;
 
     public Shift(int shiftId, String shiftType, DateTime startTime, DateTime endTime) {
         if (endTime.isBefore(startTime)) {
@@ -22,15 +21,6 @@ public class Shift implements Comparable<Shift> {
         this.startTime = startTime;
         this.endTime = endTime;
     }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
 
     public String getShiftType() {
         return shiftType;
