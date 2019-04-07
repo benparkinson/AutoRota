@@ -100,14 +100,16 @@ function validateShiftDefinitions(values) {
                 }
             });
 
-            const dayRequirementErrors = {};
-            ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].forEach((day) => {
-                if (!shiftDef.dayRequirements[day]) {
-                    dayRequirementErrors[day] = "Required";
-                    errorsForShift.dayRequirements = dayRequirementErrors;
-                    shiftErrors[shiftIndex] = errorsForShift;
-                }
-            });
+            if (shiftDef.dayRequirements) {
+                const dayRequirementErrors = {};
+                ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].forEach((day) => {
+                    if (!shiftDef.dayRequirements[day]) {
+                        dayRequirementErrors[day] = "Required";
+                        errorsForShift.dayRequirements = dayRequirementErrors;
+                        shiftErrors[shiftIndex] = errorsForShift;
+                    }
+                });
+            }
         });
 
         if (shiftErrors.length) {
