@@ -137,40 +137,40 @@ const defaultFormValues = {
     ],
     "doctors": [
         {
-            "name": "Doctor Ben"
+            "name": "Doctor A"
         },
         {
-            "name": "Doctor Dee"
+            "name": "Doctor B"
         },
         {
-            "name": "Doctor BPark"
+            "name": "Doctor C"
         },
         {
-            "name": "Doctor Sasha"
+            "name": "Doctor D"
         },
         {
-            "name": "Doctor Competent"
+            "name": "Doctor E"
         },
         {
-            "name": "Suede"
+            "name": "Doctor F"
         },
         {
-            "name": "Hercule Muller"
+            "name": "Doctor G"
         },
         {
-            "name": "Doctor Test"
+            "name": "Doctor H"
         },
         {
-            "name": "The Doctor"
+            "name": "Doctor I"
         },
         {
-            "name": "Doctor Octopus"
+            "name": "Doctor J"
         },
         {
-            "name": "Doctor Doom"
+            "name": "Doctor K"
         },
         {
-            "name": "Doctor Doctor"
+            "name": "Doctor L"
         }
     ],
     "hardRules": [
